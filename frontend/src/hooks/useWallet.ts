@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useConnect, useDisconnect, useChainId } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useChainId, useSwitchChain } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { sepolia } from "wagmi/chains";
 import { useState, useEffect } from "react";
@@ -14,45 +14,19 @@ export function useWallet() {
   const { address, isConnected } = useAccount();
   const { connect: wagmiConnect, isPending } = useConnect();
   const { disconnect: wagmiDisconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
   const wagmiChainId = useChainId();
   const [error, setError] = useState<string | null>(null);
 
   const isMetaMaskInstalled =
     typeof window !== "undefined" && !!window.ethereum;
 
-  const switchToSepolia = async () => {
-    if (typeof window === "undefined" || !window.ethereum) return;
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: `0x${sepolia.id.toString(16)}` }],
-      });
-    } catch (err: unknown) {
-      const e = err as { code?: number };
-      if (e.code === 4902) {
-        // Chain not added to MetaMask, add it
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [
-            {
-              chainId: `0x${sepolia.id.toString(16)}`,
-              chainName: "Sepolia Testnet",
-              nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
-              rpcUrls: ["https://rpc.sepolia.org"],
-              blockExplorerUrls: ["https://sepolia.etherscan.io"],
-            },
-          ],
-        });
-      }
-    }
-  };
-
-  // Auto switch to Sepolia when connected on wrong network
+  // Auto switch to Sepolia whenever connected on wrong network
   useEffect(() => {
     if (isConnected && wagmiChainId !== sepolia.id) {
-      switchToSepolia();
+      switchChain({ chainId: sepolia.id });
     }
-  }, [isConnected, wagmiChainId]);
+  }, [isConnected, wagmiChainId, switchChain]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.ethereum) return;
@@ -76,14 +50,7 @@ export function useWallet() {
   const connect = async () => {
     try {
       setError(null);
-      await wagmiConnect({ connector: injected() });
-      // After connecting, check and switch network
-      if (typeof window !== "undefined" && window.ethereum) {
-        const chainId = await window.ethereum.request({ method: "eth_chainId" });
-        if (parseInt(chainId, 16) !== sepolia.id) {
-          await switchToSepolia();
-        }
-      }
+      wagmiConnect({ connector: injected() });
     } catch (err: unknown) {
       const e = err as { code?: number };
       if (e.code === 4001) {
@@ -113,6 +80,5 @@ export function useWallet() {
     error,
     connect,
     disconnect,
-    switchToSepolia,
   };
 }
