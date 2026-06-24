@@ -76,7 +76,14 @@ export function useWallet() {
   const connect = async () => {
     try {
       setError(null);
-      wagmiConnect({ connector: injected() });
+      await wagmiConnect({ connector: injected() });
+      // After connecting, check and switch network
+      if (typeof window !== "undefined" && window.ethereum) {
+        const chainId = await window.ethereum.request({ method: "eth_chainId" });
+        if (parseInt(chainId, 16) !== sepolia.id) {
+          await switchToSepolia();
+        }
+      }
     } catch (err: unknown) {
       const e = err as { code?: number };
       if (e.code === 4001) {
