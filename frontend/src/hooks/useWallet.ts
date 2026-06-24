@@ -20,11 +20,43 @@ export function useWallet() {
   const isMetaMaskInstalled =
     typeof window !== "undefined" && !!window.ethereum;
 
-  // Listen for chain changes from MetaMask directly
+  const switchToSepolia = async () => {
+    if (typeof window === "undefined" || !window.ethereum) return;
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: `0x${sepolia.id.toString(16)}` }],
+      });
+    } catch (err: unknown) {
+      const e = err as { code?: number };
+      if (e.code === 4902) {
+        // Chain not added to MetaMask, add it
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              chainId: `0x${sepolia.id.toString(16)}`,
+              chainName: "Sepolia Testnet",
+              nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+              rpcUrls: ["https://rpc.sepolia.org"],
+              blockExplorerUrls: ["https://sepolia.etherscan.io"],
+            },
+          ],
+        });
+      }
+    }
+  };
+
+  // Auto switch to Sepolia when connected on wrong network
+  useEffect(() => {
+    if (isConnected && wagmiChainId !== sepolia.id) {
+      switchToSepolia();
+    }
+  }, [isConnected, wagmiChainId]);
+
   useEffect(() => {
     if (typeof window === "undefined" || !window.ethereum) return;
     const handleChainChanged = () => {
-      // Wagmi handles the state update; we just clear errors
       setError(null);
     };
     window.ethereum.on("chainChanged", handleChainChanged);
@@ -60,7 +92,6 @@ export function useWallet() {
     setError(null);
   };
 
-  // Format address as 0x1234...abcd
   const shortAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
     : null;
@@ -75,5 +106,6 @@ export function useWallet() {
     error,
     connect,
     disconnect,
+    switchToSepolia,
   };
 }

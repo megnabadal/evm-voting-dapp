@@ -1,11 +1,12 @@
 import { createConfig, http } from "wagmi";
 import { sepolia } from "wagmi/chains";
-import { injected } from "wagmi/connectors";
+import { injected, metaMask } from "wagmi/connectors";
 
 export const wagmiConfig = createConfig({
   chains: [sepolia],
-  connectors: [injected()],
+  connectors: [metaMask(), injected()],
   transports: {
-    [sepolia.id]: http(),
+    [sepolia.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_URL),
   },
+  ssr: true,
 });
