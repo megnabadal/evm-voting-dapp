@@ -1,0 +1,275 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import Loading from "../../components/Loading";
+import Toast from "../../components/Toast";
+import WalletGuard from "../../components/WalletGuard";
+import { castVote } from "../../services/blockchainService";
+import { formatVoteError } from "../../utils/proposal";
+import { useProposalStore } from "../../store/useProposalStore";
+import { useUIStore } from "../../store/useUIStore";
+
+// Lazy load heavy components
+const ProposalCard = dynamic(() => import("../../components/ProposalCard"), {
+  loading: () => (
+    <div className="relative h-44 overflow-hidden border border-[rgba(200,216,240,0.05)] bg-[rgba(15,22,40,0.4)]">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/20 to-transparent" />
+      <div className="p-7 space-y-3">
+        <div className="h-2 w-24 animate-pulse rounded-sm bg-[rgba(200,216,240,0.06)]" />
+        <div className="h-4 w-3/4 animate-pulse rounded-sm bg-[rgba(200,216,240,0.08)]" />
+        <div className="h-3 w-1/2 animate-pulse rounded-sm bg-[rgba(200,216,240,0.05)]" />
+      </div>
+    </div>
+  ),
+  ssr: false,
+});
+
+const ScrollReveal = dynamic(() => import("../../components/ScrollReveal"), {
+  ssr: false,
+});
+
+// Cache duration — 30 seconds
+const CACHE_TTL = 30_000;
+let lastFetchTime = 0;
+
+function ProposalsList() {
+  const { proposals, loading, error, votingId, fetchProposals, setVotingId } =
+    useProposalStore();
+  const { toast, showToast, clearToast } = useUIStore();
+  const hasFetched = useRef(false);
+
+  useEffect(() => {
+    const now = Date.now();
+    if (!hasFetched.current || now - lastFetchTime > CACHE_TTL) {
+      hasFetched.current = true;
+      lastFetchTime = now;
+      fetchProposals();
+    }
+  }, [fetchProposals]);
+
+  const handleVote = async (proposalId: number, voteYes: boolean) => {
+    setVotingId(proposalId);
+    try {
+      const receipt = await castVote(proposalId, voteYes);
+
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/proposals/${proposalId}/votes`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            txHash: receipt.hash,
+            voterAddress: receipt.from,
+            support: voteYes,
+            blockNumber: receipt.blockNumber,
+          }),
+        }
+      );
+
+      showToast("Vote submitted successfully!", "success");
+      lastFetchTime = 0;
+      await fetchProposals();
+    } catch (err) {
+      showToast(formatVoteError(err), "error");
+    } finally {
+      setVotingId(null);
+    }
+  };
+
+  const activeCount = proposals.filter((p) => p.status === "Active").length;
+  const closedCount = proposals.length - activeCount;
+
+  return (
+    <>
+      {toast && (
+        <div className="mb-6 animate-slide-up">
+          <Toast message={toast.message} type={toast.type} onClose={clearToast} />
+        </div>
+      )}
+
+      {/* Stats bar */}
+      {!loading && proposals.length > 0 && (
+        <div className="mb-10 grid grid-cols-3 divide-x divide-[rgba(200,216,240,0.05)] border border-[rgba(200,216,240,0.07)]">
+          {[
+            { label: "Total", value: proposals.length, color: "text-[#F5F0E8]/70" },
+            { label: "Active", value: activeCount, color: "text-emerald-400/80" },
+            { label: "Closed", value: closedCount, color: "text-[#A8A090]/50" },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="group relative px-6 py-5 text-center transition-colors hover:bg-[rgba(74,158,255,0.02)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-[#4A9EFF]/20 to-transparent transition-transform duration-500 group-hover:scale-x-100" />
+              <p
+                className={`text-3xl font-bold tabular-nums ${color}`}
+                style={{ fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)" }}
+              >
+                {value}
+              </p>
+              <p className="mono mt-1 text-[9px] tracking-[0.28em] text-[#A8A090]/30 uppercase">
+                {label}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Skeleton while loading */}
+      {loading && (
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="relative h-44 overflow-hidden border border-[rgba(200,216,240,0.05)] bg-[rgba(15,22,40,0.4)]"
+              style={{ animationDelay: `${i * 100}ms` }}
+            >
+              <div className="absolute inset-x-0 top-0 h-px animate-pulse bg-gradient-to-r from-transparent via-[#4A9EFF]/15 to-transparent" />
+              <div className="p-7 space-y-3">
+                <div className="h-2 w-20 animate-pulse rounded-sm bg-[rgba(200,216,240,0.06)]" style={{ animationDelay: `${i*80}ms` }} />
+                <div className="h-4 w-3/4 animate-pulse rounded-sm bg-[rgba(200,216,240,0.08)]" style={{ animationDelay: `${i*80}ms` }} />
+                <div className="h-3 w-1/2 animate-pulse rounded-sm bg-[rgba(200,216,240,0.05)]" style={{ animationDelay: `${i*80}ms` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <div className="relative border border-[rgba(200,216,240,0.1)] bg-[rgba(74,158,255,0.04)] px-5 py-4">
+          <span className="pointer-events-none absolute top-0 left-0 h-2 w-2 border-t border-l border-[#4A9EFF]/30" />
+          <span className="pointer-events-none absolute bottom-0 right-0 h-2 w-2 border-b border-r border-[#4A9EFF]/30" />
+          <p className="mono text-sm text-[#C8D8F0]/70">{error}</p>
+        </div>
+      )}
+
+      {!loading && !error && proposals.length === 0 && (
+        <div className="py-36 text-center animate-fade-up">
+          <div className="relative mx-auto mb-10 flex h-20 w-20 items-center justify-center border border-[rgba(200,216,240,0.08)] bg-[rgba(15,22,40,0.6)]">
+            <span className="pointer-events-none absolute top-0 left-0 h-4 w-4 border-t border-l border-[#4A9EFF]/25" />
+            <span className="pointer-events-none absolute bottom-0 right-0 h-4 w-4 border-b border-r border-[#4A9EFF]/25" />
+            {/* Pulsing ring */}
+            <span className="absolute h-full w-full animate-ping-ring rounded-full border border-[#4A9EFF]/10" />
+            <span className="mono text-2xl text-[#A8A090]/35">∅</span>
+          </div>
+          <p
+            className="mb-3 text-xl font-bold text-[#F5F0E8]/55"
+            style={{ fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)" }}
+          >
+            No proposals yet
+          </p>
+          <p className="mono mb-14 text-[10px] tracking-[0.28em] text-[#A8A090]/30 uppercase">
+            Initiate the first directive
+          </p>
+          <Link
+            href="/proposals/create"
+            className="blue-glow-btn group relative inline-flex items-center border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-8 py-4 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/18 hover:border-[#4A9EFF]/60 hover:scale-[1.02] active:scale-[0.97]"
+          >
+            <span className="pointer-events-none absolute top-0 left-0 h-2 w-2 border-t border-l border-[#4A9EFF]/40" />
+            <span className="pointer-events-none absolute bottom-0 right-0 h-2 w-2 border-b border-r border-[#4A9EFF]/40" />
+            Create Proposal
+          </Link>
+        </div>
+      )}
+
+      {/* Proposals with staggered reveal */}
+      {!loading && proposals.length > 0 && (
+        <div className="space-y-3">
+          {proposals.map((proposal, i) => (
+            <ScrollReveal key={proposal.id} delay={i * 60}>
+              <ProposalCard
+                id={proposal.id}
+                title={proposal.title}
+                description={proposal.description}
+                status={proposal.status}
+                yesPercent={proposal.yesPercent}
+                totalVotes={proposal.totalVotes}
+                onVote={handleVote}
+                isVoting={votingId === proposal.id}
+              />
+            </ScrollReveal>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+export default function ProposalsPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-[#0A0F1E] text-[#F5F0E8]">
+      {/* Fixed atmospheric glow */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="animate-atmospheric absolute -top-60 left-1/2 h-[700px] w-[800px] -translate-x-1/2 rounded-full bg-[#4A9EFF]/[0.045] blur-[200px]" />
+        <div className="animate-atmospheric-slow absolute bottom-0 right-0 h-[400px] w-[500px] rounded-full bg-[#4A9EFF]/[0.025] blur-[150px]" />
+      </div>
+
+      <Navbar />
+
+      {/* Cinematic command-center header */}
+      <div className="relative overflow-hidden border-b border-[rgba(200,216,240,0.05)]">
+        <div className="fine-grid pointer-events-none absolute inset-0 opacity-45" />
+        <div className="hex-grid pointer-events-none absolute inset-0 opacity-30" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0A0F1E]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/20 to-transparent" />
+
+        {/* Scan line */}
+        <div
+          className="animate-scan-line pointer-events-none absolute inset-x-0 top-0 h-px opacity-60"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(74,158,255,0.15), transparent)" }}
+        />
+
+        {/* Atmospheric glow in header */}
+        <div className="pointer-events-none absolute left-1/4 top-0 h-[200px] w-[400px] rounded-full bg-[#4A9EFF]/[0.04] blur-[80px]" />
+
+        <div className="relative mx-auto max-w-6xl px-8 pb-16 pt-16">
+          <div className="animate-fade-up mb-8 flex items-center gap-4">
+            <span className="mono text-[9px] tracking-[0.42em] text-[#4A9EFF]/38 uppercase">
+              // On-Chain Proposals
+            </span>
+            <span className="animate-line-extend h-px flex-1 bg-[rgba(200,216,240,0.04)]" />
+            <span className="mono text-[9px] tracking-[0.2em] text-[#A8A090]/18 uppercase">
+              Sepolia
+            </span>
+          </div>
+
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <h1
+                className="animate-cinema-1 font-extrabold leading-[0.85] tracking-[-0.025em] text-[#F5F0E8]/85"
+                style={{
+                  fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
+                  fontSize: "clamp(3rem, 9vw, 7rem)",
+                }}
+              >
+                PROPOSALS
+              </h1>
+              <p className="animate-cinema-2 mono mt-4 text-[11px] tracking-[0.22em] text-[#A8A090]/38 uppercase">
+                All on-chain governance — cast your vote or create a new directive
+              </p>
+            </div>
+
+            <div className="animate-cinema-3 shrink-0">
+              <Link
+                href="/proposals/create"
+                className="blue-glow-btn group relative inline-flex items-center border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-6 py-3 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/18 hover:border-[#4A9EFF]/60 hover:scale-[1.02] active:scale-[0.97]"
+              >
+                <span className="pointer-events-none absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-[#4A9EFF]/35 transition-all duration-300 group-hover:h-2.5 group-hover:w-2.5" />
+                <span className="pointer-events-none absolute bottom-0 right-0 h-1.5 w-1.5 border-b border-r border-[#4A9EFF]/35 transition-all duration-300 group-hover:h-2.5 group-hover:w-2.5" />
+                + Create
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main className="relative mx-auto w-full max-w-6xl flex-1 px-8 py-12">
+        <WalletGuard message="Connect your wallet to access the governance network.">
+          <ProposalsList />
+        </WalletGuard>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
