@@ -9,4 +9,5 @@ export const wagmiConfig = createConfig({
     [sepolia.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_URL),
   },
   ssr: true,
+  storage: null,
 });
