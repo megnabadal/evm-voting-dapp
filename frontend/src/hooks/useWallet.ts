@@ -12,6 +12,7 @@ export function useWallet() {
   const { disconnect: wagmiDisconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
   const [error, setError] = useState<string | null>(null);
+  const [showMetaMaskWarning, setShowMetaMaskWarning] = useState(false);
 
   const isMetaMaskInstalled =
     typeof window !== "undefined" && !!window.ethereum;
@@ -25,7 +26,6 @@ export function useWallet() {
     };
   }, []);
 
-  // chain is undefined when connected to a chain not in wagmi config (i.e. wrong network)
   const network: NetworkInfo | null = isConnected
     ? {
         chainId: chain?.id ?? 0,
@@ -35,6 +35,10 @@ export function useWallet() {
     : null;
 
   const connect = async () => {
+    if (!isMetaMaskInstalled) {
+      setShowMetaMaskWarning(true);
+      return;
+    }
     try {
       setError(null);
       wagmiConnect({ connector: injected() });
@@ -72,5 +76,7 @@ export function useWallet() {
     connect,
     disconnect,
     switchToSepolia,
+    showMetaMaskWarning,
+    setShowMetaMaskWarning,
   };
 }
