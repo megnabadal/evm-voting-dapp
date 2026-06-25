@@ -15,7 +15,7 @@ app.use(cors({
       process.env.FRONTEND_URL || "http://localhost:3000",
       "http://localhost:3000",
     ];
-    const vercelPreview = /https:\/\/evm-voting-dapp-xaoc.*\.vercel\.app$/;
+    const vercelPreview = /https:\/\/evm-voting-dapp.*\.vercel\.app$/;
 
     if (!origin) return callback(null, true);
     if (allowed.includes(origin) || vercelPreview.test(origin)) {
