@@ -45,7 +45,7 @@ export default function NetworkGuard() {
               This app requires MetaMask to connect your wallet and interact with
               the blockchain.
             </p>
-            
+            <a
               href="https://metamask.io/download"
               target="_blank"
               rel="noopener noreferrer"
