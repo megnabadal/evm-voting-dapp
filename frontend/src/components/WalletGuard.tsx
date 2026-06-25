@@ -1,4 +1,4 @@
-s"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useWallet } from "../hooks/useWallet";
@@ -29,7 +29,7 @@ export default function WalletGuard({
       >
         <p className="mb-1 font-semibold text-[#F5F0E8]/80">MetaMask not found</p>
         <p className="mb-4 text-sm text-[#A8A090]/60">Install MetaMask to use this app.</p>
-        
+        <a
           href="https://metamask.io/download"
           target="_blank"
           rel="noopener noreferrer"
