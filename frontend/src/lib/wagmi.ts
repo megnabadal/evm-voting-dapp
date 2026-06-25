@@ -6,7 +6,7 @@ export const wagmiConfig = createConfig({
   chains: [sepolia],
   connectors: [metaMask(), injected()],
   transports: {
-    [sepolia.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_URL),
+    [sepolia.id]: http("https://eth-sepolia.g.alchemy.com/v2/_-N3uej4LaYmJhRTG-Ci0"),
   },
   ssr: true,
 });
