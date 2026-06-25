@@ -57,7 +57,7 @@ function ProposalsList() {
       const receipt = await castVote(proposalId, voteYes);
 
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/proposals/${proposalId}/votes`,
+        `${"https://evm-voting-dapp-production.up.railway.app"}/api/proposals/${proposalId}/votes`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

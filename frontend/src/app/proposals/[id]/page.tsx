@@ -234,7 +234,7 @@ function ProposalDetail({ id }: { id: number }) {
       setVoteLoading(true);
       setVoteError(null);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/proposals/${id}/votes`
+        `${"https://evm-voting-dapp-production.up.railway.app"}/api/proposals/${id}/votes`
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
@@ -259,7 +259,7 @@ function ProposalDetail({ id }: { id: number }) {
       const receipt = await castVote(id, voteYes);
 
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/proposals/${id}/votes`,
+        `${"https://evm-voting-dapp-production.up.railway.app"}/api/proposals/${id}/votes`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
