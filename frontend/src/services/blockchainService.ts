@@ -1,7 +1,14 @@
 import { ethers } from "ethers";
 import { VOTING_CONTRACT_ABI, VOTING_CONTRACT_ADDRESS } from "../lib/contract";
 
-// ─── Provider (read-only) ────────────────────────────────────────────────────
+const ALCHEMY_URL = "https://eth-sepolia.g.alchemy.com/v2/_-N3uej4LaYmJhRTG-Ci0";
+
+// Read-only provider (always Sepolia via Alchemy)
+export const getReadProvider = (): ethers.JsonRpcProvider => {
+  return new ethers.JsonRpcProvider(ALCHEMY_URL);
+};
+
+// Browser provider (MetaMask) for writes
 export const getProvider = (): ethers.BrowserProvider => {
   if (typeof window === "undefined" || !window.ethereum) {
     throw new Error("No Ethereum provider found. Please install MetaMask.");
@@ -9,16 +16,15 @@ export const getProvider = (): ethers.BrowserProvider => {
   return new ethers.BrowserProvider(window.ethereum);
 };
 
-// ─── Signer (read + write) ───────────────────────────────────────────────────
 export const getSigner = async (): Promise<ethers.JsonRpcSigner> => {
   const provider = getProvider();
   await provider.send("eth_requestAccounts", []);
   return provider.getSigner();
 };
 
-// ─── Contract (read-only) ────────────────────────────────────────────────────
+// Read-only contract uses Alchemy
 export const getContract = async (): Promise<ethers.Contract> => {
-  const provider = getProvider();
+  const provider = getReadProvider();
   return new ethers.Contract(
     VOTING_CONTRACT_ADDRESS,
     VOTING_CONTRACT_ABI,
@@ -26,7 +32,6 @@ export const getContract = async (): Promise<ethers.Contract> => {
   );
 };
 
-// ─── Contract with signer (read + write) ────────────────────────────────────
 export const getContractWithSigner = async (): Promise<ethers.Contract> => {
   const signer = await getSigner();
   return new ethers.Contract(
@@ -36,20 +41,17 @@ export const getContractWithSigner = async (): Promise<ethers.Contract> => {
   );
 };
 
-// ─── Read: get all proposals ─────────────────────────────────────────────────
 export const getAllProposals = async () => {
   const contract = await getContract();
   const proposals = await contract.getAllProposals();
   return proposals;
 };
 
-// ─── Read: get single proposal ───────────────────────────────────────────────
 export const getProposal = async (proposalId: number) => {
   const contract = await getContract();
   return contract.getProposal(proposalId);
 };
 
-// ─── Write: create proposal ──────────────────────────────────────────────────
 export const createProposal = async (
   title: string,
   description: string,
@@ -63,7 +65,6 @@ export const createProposal = async (
   return receipt;
 };
 
-// ─── Write: cast vote ────────────────────────────────────────────────────────
 export const castVote = async (
   proposalId: number,
   voteYes: boolean
