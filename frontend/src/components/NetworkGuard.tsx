@@ -3,12 +3,11 @@
 import { useWallet } from "../hooks/useWallet";
 
 export default function NetworkGuard() {
-  const { isConnected, isMetaMaskInstalled, network, switchToSepolia } = useWallet();
+  const { isConnected, network, switchToSepolia, showMetaMaskWarning, setShowMetaMaskWarning } = useWallet();
 
-  const showMetaMaskModal = !isMetaMaskInstalled;
-  const showNetworkModal = isMetaMaskInstalled && isConnected && network && !network.isSupported;
+  const showNetworkModal = isConnected && network && !network.isSupported;
 
-  if (!showMetaMaskModal && !showNetworkModal) return null;
+  if (!showMetaMaskWarning && !showNetworkModal) return null;
 
   return (
     <div
@@ -19,31 +18,27 @@ export default function NetworkGuard() {
         className="mx-4 max-w-sm w-full p-8 text-center"
         style={{
           background: "rgba(15, 22, 40, 0.95)",
-          border: `1px solid ${showMetaMaskModal ? "rgba(200, 216, 240, 0.15)" : "rgba(255, 180, 50, 0.3)"}`,
-          boxShadow: `0 0 40px ${showMetaMaskModal ? "rgba(74, 158, 255, 0.06)" : "rgba(255, 180, 50, 0.08)"}`,
+          border: `1px solid ${showMetaMaskWarning ? "rgba(200, 216, 240, 0.15)" : "rgba(255, 180, 50, 0.3)"}`,
+          boxShadow: `0 0 40px ${showMetaMaskWarning ? "rgba(74, 158, 255, 0.06)" : "rgba(255, 180, 50, 0.08)"}`,
         }}
       >
         <div
           className="mx-auto mb-5 flex h-12 w-12 items-center justify-center text-2xl"
           style={{
-            border: `1px solid ${showMetaMaskModal ? "rgba(200, 216, 240, 0.1)" : "rgba(255, 180, 50, 0.2)"}`,
-            background: showMetaMaskModal ? "rgba(74, 158, 255, 0.05)" : "rgba(255, 180, 50, 0.05)",
+            border: `1px solid ${showMetaMaskWarning ? "rgba(200, 216, 240, 0.1)" : "rgba(255, 180, 50, 0.2)"}`,
+            background: showMetaMaskWarning ? "rgba(74, 158, 255, 0.05)" : "rgba(255, 180, 50, 0.05)",
           }}
         >
-          {showMetaMaskModal ? "🦊" : "⚠️"}
+          {showMetaMaskWarning ? "🦊" : "⚠️"}
         </div>
 
-        {showMetaMaskModal ? (
+        {showMetaMaskWarning ? (
           <>
-            <p
-              className="mb-2 font-semibold text-[#F5F0E8]/90"
-              style={{ fontFamily: "var(--font-playfair)" }}
-            >
+            <p className="mb-2 font-semibold text-[#F5F0E8]/90" style={{ fontFamily: "var(--font-playfair)" }}>
               MetaMask Not Detected
             </p>
             <p className="mb-6 text-sm text-[#A8A090]/70">
-              This app requires MetaMask to connect your wallet and interact with
-              the blockchain.
+              This app requires MetaMask to connect your wallet and interact with the blockchain.
             </p>
             <a
               href="https://metamask.io/download"
@@ -53,19 +48,21 @@ export default function NetworkGuard() {
             >
               Install MetaMask
             </a>
+            <button
+              onClick={() => setShowMetaMaskWarning(false)}
+              className="mono mt-3 w-full border border-[rgba(200,216,240,0.1)] px-6 py-2 text-xs text-[#A8A090]/50 uppercase tracking-[0.12em] transition-all duration-200 hover:text-[#A8A090]/80"
+            >
+              Dismiss
+            </button>
           </>
         ) : (
           <>
-            <p
-              className="mb-2 font-semibold text-[#F5F0E8]/90"
-              style={{ fontFamily: "var(--font-playfair)" }}
-            >
+            <p className="mb-2 font-semibold text-[#F5F0E8]/90" style={{ fontFamily: "var(--font-playfair)" }}>
               Wrong Network
             </p>
             <p className="mb-6 text-sm text-[#A8A090]/70">
               You are connected to{" "}
-              <span className="text-[#F5F0E8]/80">{network!.name}</span>. This
-              app only works on Sepolia Testnet.
+              <span className="text-[#F5F0E8]/80">{network!.name}</span>. This app only works on Sepolia Testnet.
             </p>
             <button
               onClick={switchToSepolia}
