@@ -1,4 +1,4 @@
-"use client";
+s"use client";
 
 import { useEffect, useState } from "react";
 import { useWallet } from "../hooks/useWallet";
@@ -10,7 +10,7 @@ export default function WalletGuard({
   children: React.ReactNode;
   message?: string;
 }) {
-  const { isConnected, isMetaMaskInstalled, connect, error, network } = useWallet();
+  const { isConnected, isMetaMaskInstalled, connect, error, network, switchToSepolia } = useWallet();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function WalletGuard({
       >
         <p className="mb-1 font-semibold text-[#F5F0E8]/80">MetaMask not found</p>
         <p className="mb-4 text-sm text-[#A8A090]/60">Install MetaMask to use this app.</p>
-        <a
+        
           href="https://metamask.io/download"
           target="_blank"
           rel="noopener noreferrer"
@@ -79,10 +79,21 @@ export default function WalletGuard({
         className="p-8 text-center"
         style={{ border: "1px solid rgba(200, 216, 240, 0.1)", background: "rgba(15, 22, 40, 0.6)" }}
       >
+        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center border border-[rgba(200,216,240,0.08)] bg-[rgba(15,22,40,0.6)] text-xl">
+          ⚠️
+        </div>
         <p className="mb-1 font-semibold text-[#F5F0E8]/80">Wrong Network</p>
-        <p className="text-sm text-[#A8A090]/55">
-          Switch to Sepolia in MetaMask to continue.
+        <p className="mb-6 text-sm text-[#A8A090]/55">
+          You are on{" "}
+          <span className="text-[#F5F0E8]/70">{network.name}</span>. Switch to
+          Sepolia to continue.
         </p>
+        <button
+          onClick={switchToSepolia}
+          className="mono border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-6 py-3 text-sm font-medium tracking-[0.14em] text-[#4A9EFF] uppercase transition-all duration-200 hover:bg-[#4A9EFF]/20 hover:border-[#4A9EFF]/60 active:scale-[0.97]"
+        >
+          Switch to Sepolia
+        </button>
       </div>
     );
   }
