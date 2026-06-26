@@ -43,6 +43,7 @@ export default defineConfig({
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
       gasPrice: "auto",
       maxPriorityFeePerGas: 1000000000,
+      maxFeePerGas: 8000000000,
     },
   },
   verify: {
