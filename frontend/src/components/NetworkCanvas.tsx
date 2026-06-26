@@ -74,12 +74,12 @@ export default function NetworkCanvas() {
     >
       <defs>
         <radialGradient id="main-hub-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#4A9EFF" stopOpacity="0.18" />
-          <stop offset="100%" stopColor="#4A9EFF" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
         </radialGradient>
         <radialGradient id="hub-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#4A9EFF" stopOpacity="0.10" />
-          <stop offset="100%" stopColor="#4A9EFF" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.10" />
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
         </radialGradient>
       </defs>
 
@@ -93,7 +93,7 @@ export default function NetworkCanvas() {
             y1={n1.y}
             x2={n2.x}
             y2={n2.y}
-            stroke={accent ? "rgba(74,158,255,0.16)" : "rgba(200,216,240,0.045)"}
+            stroke={accent ? "color-mix(in srgb, var(--accent) 16%, transparent)" : "color-mix(in srgb, var(--accent-secondary) 4.5%, transparent)"}
             strokeWidth={accent ? "0.8" : "0.5"}
             style={{
               animationName: "edge-pulse",
@@ -123,7 +123,7 @@ export default function NetworkCanvas() {
               <circle
                 cx={node.x} cy={node.y} r={node.r * 7}
                 fill="none"
-                stroke="rgba(74,158,255,0.20)"
+                stroke="color-mix(in srgb, var(--accent) 20%, transparent)"
                 strokeWidth="0.6"
                 style={{
                   animationName: "node-ring",
@@ -135,7 +135,7 @@ export default function NetworkCanvas() {
               <circle
                 cx={node.x} cy={node.y} r={node.r * 7}
                 fill="none"
-                stroke="rgba(74,158,255,0.10)"
+                stroke="color-mix(in srgb, var(--accent) 10%, transparent)"
                 strokeWidth="0.5"
                 style={{
                   animationName: "node-ring",
@@ -165,10 +165,10 @@ export default function NetworkCanvas() {
             r={node.r}
             fill={
               node.main
-                ? "rgba(74,158,255,0.75)"
+                ? "color-mix(in srgb, var(--accent) 75%, transparent)"
                 : node.hub
-                ? "rgba(74,158,255,0.38)"
-                : "rgba(200,216,240,0.20)"
+                ? "color-mix(in srgb, var(--accent) 38%, transparent)"
+                : "color-mix(in srgb, var(--accent-secondary) 20%, transparent)"
             }
             style={{
               animationName: "node-breathe",

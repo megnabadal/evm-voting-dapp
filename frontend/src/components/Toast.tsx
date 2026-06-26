@@ -17,13 +17,22 @@ const icons: Record<ToastType, string> = {
   info: "i",
 };
 
-const styles: Record<ToastType, string> = {
-  success:
-    "border-emerald-700/40 bg-[rgba(6,13,26,0.90)] text-emerald-300",
-  error:
-    "border-[rgba(200,216,240,0.14)] bg-[rgba(6,13,26,0.90)] text-[#C8D8F0]/80",
-  info:
-    "border-[rgba(200,216,240,0.10)] bg-[rgba(6,13,26,0.88)] text-[#A8A090]",
+const styles: Record<ToastType, React.CSSProperties> = {
+  success: {
+    borderColor: "rgba(6,78,59,0.4)",
+    background: "color-mix(in srgb, var(--bg-dark) 90%, transparent)",
+    color: "rgb(110 231 183)",
+  },
+  error: {
+    borderColor: "color-mix(in srgb, var(--accent-secondary) 14%, transparent)",
+    background: "color-mix(in srgb, var(--bg-dark) 90%, transparent)",
+    color: "color-mix(in srgb, var(--accent-secondary) 80%, transparent)",
+  },
+  info: {
+    borderColor: "color-mix(in srgb, var(--accent-secondary) 10%, transparent)",
+    background: "color-mix(in srgb, var(--bg-dark) 88%, transparent)",
+    color: "var(--text-secondary)",
+  },
 };
 
 export default function Toast({
@@ -47,7 +56,8 @@ export default function Toast({
 
   return (
     <div
-      className={`flex items-center gap-3 border px-4 py-3 text-sm backdrop-blur-sm ${styles[type]}`}
+      className="flex items-center gap-3 border px-4 py-3 text-sm backdrop-blur-sm"
+      style={styles[type]}
     >
       <span className="flex h-5 w-5 shrink-0 items-center justify-center border border-current text-xs font-bold">
         {icons[type]}

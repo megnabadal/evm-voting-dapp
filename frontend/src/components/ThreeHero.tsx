@@ -3,10 +3,9 @@
 import { useEffect, useRef } from "react";
 
 const PARTICLE_COUNT = 72;
-const MAX_SPEED = 0.20; // px per frame
+const MAX_SPEED = 0.20;
 const DOT_OPACITY = 0.30;
 const LINE_OPACITY_MAX = 0.08;
-const COLOR = "200,216,240"; // #C8D8F0
 
 interface Particle {
   x: number;
@@ -14,6 +13,14 @@ interface Particle {
   vx: number;
   vy: number;
   r: number;
+}
+
+function getParticleColor(): string {
+  if (typeof window === "undefined") return "200,216,240";
+  const val = getComputedStyle(document.documentElement)
+    .getPropertyValue("--particle-color")
+    .trim();
+  return val || "200,216,240";
 }
 
 export default function ThreeHero() {
@@ -41,7 +48,6 @@ export default function ThreeHero() {
       h = mount.clientHeight || window.innerHeight;
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
-      // Setting canvas.width resets the context transform — re-apply scale.
       ctx.scale(dpr, dpr);
       connDist = Math.min(w, h) * 0.19;
     };
@@ -65,6 +71,8 @@ export default function ThreeHero() {
       animId = requestAnimationFrame(draw);
       ctx.clearRect(0, 0, w, h);
 
+      const COLOR = getParticleColor();
+
       for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
@@ -72,7 +80,6 @@ export default function ThreeHero() {
         if (p.y < 0 || p.y > h) p.vy *= -1;
       }
 
-      // Draw connections
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -90,7 +97,6 @@ export default function ThreeHero() {
         }
       }
 
-      // Draw dots
       ctx.fillStyle = `rgba(${COLOR},${DOT_OPACITY})`;
       for (const p of particles) {
         ctx.beginPath();

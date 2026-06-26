@@ -2,14 +2,29 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-[rgba(200,216,240,0.055)] bg-[#060D1A]">
+    <footer
+      className="relative overflow-hidden border-t"
+      style={{
+        borderColor: "color-mix(in srgb, var(--accent-secondary) 5.5%, transparent)",
+        background: "var(--bg-dark)",
+      }}
+    >
       {/* Blue accent thread */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/22 to-transparent" />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 22%, transparent), transparent)" }}
+      />
 
       {/* Atmospheric glows */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="animate-float-slower absolute -bottom-10 -left-10 h-[300px] w-[420px] rounded-full bg-[#4A9EFF]/[0.035] blur-[130px]" />
-        <div className="animate-float-slow absolute -top-10 right-0 h-[220px] w-[320px] rounded-full bg-[#4A9EFF]/[0.025] blur-[110px]" />
+        <div
+          className="animate-float-slower absolute -bottom-10 -left-10 h-[300px] w-[420px] rounded-full blur-[130px]"
+          style={{ background: "color-mix(in srgb, var(--accent) 3.5%, transparent)" }}
+        />
+        <div
+          className="animate-float-slow absolute -top-10 right-0 h-[220px] w-[320px] rounded-full blur-[110px]"
+          style={{ background: "color-mix(in srgb, var(--accent) 2.5%, transparent)" }}
+        />
       </div>
 
       {/* Chain motif particle field SVG */}
@@ -39,14 +54,14 @@ export default function Footer() {
                   cx={n.x}
                   cy={n.y}
                   r={n.r * 3.5}
-                  fill="rgba(74,158,255,0.055)"
+                  fill="color-mix(in srgb, var(--accent) 5.5%, transparent)"
                 />
               )}
               <circle
                 cx={n.x}
                 cy={n.y}
                 r={n.r}
-                fill={n.hub ? "rgba(74,158,255,0.55)" : "rgba(200,216,240,0.25)"}
+                fill={n.hub ? "color-mix(in srgb, var(--accent) 55%, transparent)" : "color-mix(in srgb, var(--accent-secondary) 25%, transparent)"}
               />
             </g>
           ))}
@@ -69,22 +84,22 @@ export default function Footer() {
             <line
               key={i}
               x1={e[0]} y1={e[1]} x2={e[2]} y2={e[3]}
-              stroke={i % 3 === 0 ? "rgba(74,158,255,0.12)" : "rgba(200,216,240,0.06)"}
+              stroke={i % 3 === 0 ? "color-mix(in srgb, var(--accent) 12%, transparent)" : "color-mix(in srgb, var(--accent-secondary) 6%, transparent)"}
               strokeWidth={i % 3 === 0 ? "0.8" : "0.5"}
             />
           ))}
 
           {/* Horizontal chain floor lines */}
-          <line x1="0" y1="230" x2="420" y2="230" stroke="rgba(74,158,255,0.12)" strokeWidth="0.5" />
-          <line x1="1020" y1="230" x2="1440" y2="230" stroke="rgba(74,158,255,0.12)" strokeWidth="0.5" />
-          <line x1="480" y1="230" x2="960" y2="230" stroke="rgba(74,158,255,0.065)" strokeWidth="0.5" />
+          <line x1="0" y1="230" x2="420" y2="230" stroke="color-mix(in srgb, var(--accent) 12%, transparent)" strokeWidth="0.5" />
+          <line x1="1020" y1="230" x2="1440" y2="230" stroke="color-mix(in srgb, var(--accent) 12%, transparent)" strokeWidth="0.5" />
+          <line x1="480" y1="230" x2="960" y2="230" stroke="color-mix(in srgb, var(--accent) 6.5%, transparent)" strokeWidth="0.5" />
 
           {/* Vertical tick marks */}
           {[120, 360, 600, 840, 1080, 1320].map((x, i) => (
             <line
               key={i}
               x1={x} y1="220" x2={x} y2="235"
-              stroke="rgba(200,216,240,0.10)"
+              stroke="color-mix(in srgb, var(--accent-secondary) 10%, transparent)"
               strokeWidth="0.5"
             />
           ))}
@@ -99,15 +114,24 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="mb-4 flex items-center gap-2.5">
-              <p className="mono text-[13px] font-medium tracking-[0.30em] text-[#C8D8F0]/72 uppercase">
+              <p
+                className="mono text-[13px] font-medium tracking-[0.30em] uppercase"
+                style={{ color: "color-mix(in srgb, var(--accent-secondary) 72%, transparent)" }}
+              >
                 VoteChain
               </p>
               <span
-                className="h-1.5 w-1.5 rounded-full bg-[#4A9EFF]"
-                style={{ boxShadow: "0 0 7px rgba(74,158,255,0.72)" }}
+                className="h-1.5 w-1.5 rounded-full"
+                style={{
+                  background: "var(--accent)",
+                  boxShadow: "0 0 7px color-mix(in srgb, var(--accent) 72%, transparent)",
+                }}
               />
             </div>
-            <p className="mono text-[10px] leading-relaxed tracking-[0.12em] text-[#A8A090]/45 uppercase">
+            <p
+              className="mono text-[10px] leading-relaxed tracking-[0.12em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 45%, transparent)" }}
+            >
               Transparent governance,<br />
               suspended in darkness,<br />
               waiting to move.
@@ -120,11 +144,16 @@ export default function Footer() {
                   <div
                     className="h-1.5 w-1.5 rounded-full"
                     style={{
-                      background: i === 2 ? "#4A9EFF" : "rgba(200,216,240,0.18)",
-                      boxShadow: i === 2 ? "0 0 5px rgba(74,158,255,0.6)" : "none",
+                      background: i === 2 ? "var(--accent)" : "color-mix(in srgb, var(--accent-secondary) 18%, transparent)",
+                      boxShadow: i === 2 ? "0 0 5px color-mix(in srgb, var(--accent) 60%, transparent)" : "none",
                     }}
                   />
-                  {i < 4 && <div className="h-px w-3 bg-[rgba(200,216,240,0.08)]" />}
+                  {i < 4 && (
+                    <div
+                      className="h-px w-3"
+                      style={{ background: "color-mix(in srgb, var(--accent-secondary) 8%, transparent)" }}
+                    />
+                  )}
                 </div>
               ))}
             </div>
@@ -132,7 +161,10 @@ export default function Footer() {
 
           {/* Protocol links */}
           <div>
-            <p className="mono mb-5 text-[9px] tracking-[0.32em] text-[#4A9EFF]/38 uppercase">
+            <p
+              className="mono mb-5 text-[9px] tracking-[0.32em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--accent) 38%, transparent)" }}
+            >
               Protocol
             </p>
             <div className="flex flex-col gap-3">
@@ -143,9 +175,13 @@ export default function Footer() {
                 <Link
                   key={href}
                   href={href}
-                  className="group mono flex items-center gap-2 text-[10px] tracking-[0.22em] text-[#A8A090]/38 uppercase transition-colors duration-300 hover:text-[#C8D8F0]/65"
+                  className="group mono flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase transition-colors duration-300"
+                  style={{ color: "color-mix(in srgb, var(--text-secondary) 38%, transparent)" }}
                 >
-                  <span className="h-px w-3 bg-[rgba(200,216,240,0.10)] transition-all duration-300 group-hover:w-5 group-hover:bg-[#4A9EFF]/35" />
+                  <span
+                    className="h-px w-3 transition-all duration-300 group-hover:w-5"
+                    style={{ background: "color-mix(in srgb, var(--accent-secondary) 10%, transparent)" }}
+                  />
                   {label}
                 </Link>
               ))}
@@ -153,9 +189,13 @@ export default function Footer() {
                 href="https://sepolia.etherscan.io"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group mono flex items-center gap-2 text-[10px] tracking-[0.22em] text-[#A8A090]/38 uppercase transition-colors duration-300 hover:text-[#4A9EFF]/65"
+                className="group mono flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase transition-colors duration-300"
+                style={{ color: "color-mix(in srgb, var(--text-secondary) 38%, transparent)" }}
               >
-                <span className="h-px w-3 bg-[rgba(200,216,240,0.10)] transition-all duration-300 group-hover:w-5 group-hover:bg-[#4A9EFF]/35" />
+                <span
+                  className="h-px w-3 transition-all duration-300 group-hover:w-5"
+                  style={{ background: "color-mix(in srgb, var(--accent-secondary) 10%, transparent)" }}
+                />
                 Etherscan ↗
               </a>
             </div>
@@ -163,7 +203,10 @@ export default function Footer() {
 
           {/* Network info */}
           <div>
-            <p className="mono mb-5 text-[9px] tracking-[0.32em] text-[#4A9EFF]/38 uppercase">
+            <p
+              className="mono mb-5 text-[9px] tracking-[0.32em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--accent) 38%, transparent)" }}
+            >
               Network
             </p>
             <div className="space-y-3">
@@ -176,24 +219,46 @@ export default function Footer() {
                   Sepolia Testnet
                 </span>
               </div>
-              <p className="mono break-all text-[9px] tracking-wide text-[#A8A090]/22 leading-relaxed">
+              <p
+                className="mono break-all text-[9px] tracking-wide leading-relaxed"
+                style={{ color: "color-mix(in srgb, var(--text-secondary) 22%, transparent)" }}
+              >
                 0x0eE97B60A88421E106e4999EBCF3D0144b479A94
               </p>
               <div className="flex items-center gap-1.5">
-                <span className="mono text-[8px] tracking-[0.18em] text-[#A8A090]/18 uppercase">Block</span>
-                <span className="mono text-[8px] text-[#4A9EFF]/28">11113560</span>
+                <span
+                  className="mono text-[8px] tracking-[0.18em] uppercase"
+                  style={{ color: "color-mix(in srgb, var(--text-secondary) 18%, transparent)" }}
+                >
+                  Block
+                </span>
+                <span
+                  className="mono text-[8px]"
+                  style={{ color: "color-mix(in srgb, var(--accent) 28%, transparent)" }}
+                >
+                  11113560
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom rule */}
-        <div className="border-t border-[rgba(200,216,240,0.045)] pt-7">
+        <div
+          className="border-t pt-7"
+          style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 4.5%, transparent)" }}
+        >
           <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-            <p className="mono text-[9px] tracking-[0.30em] text-[#A8A090]/22 uppercase">
+            <p
+              className="mono text-[9px] tracking-[0.30em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 22%, transparent)" }}
+            >
               Decentralized · Transparent · Permanent
             </p>
-            <p className="mono text-[9px] text-[#A8A090]/15">
+            <p
+              className="mono text-[9px]"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 15%, transparent)" }}
+            >
               VoteChain v1.0 // All rights reserved
             </p>
           </div>

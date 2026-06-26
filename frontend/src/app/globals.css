@@ -12,9 +12,23 @@
   --accent-secondary: #C8D8F0;
   --border-subtle: rgba(200, 216, 240, 0.08);
   --glow: rgba(74, 158, 255, 0.3);
+  --particle-color: 200,216,240;
   --font-display: var(--font-playfair), 'Playfair Display', Georgia, serif;
   --font-body: var(--font-dm-sans), 'DM Sans', system-ui, sans-serif;
   --font-mono: var(--font-dm-mono), 'DM Mono', 'Courier New', monospace;
+}
+
+[data-theme="light"] {
+  --bg-primary: #F0EBE0;
+  --bg-dark: #E8E0D0;
+  --bg-secondary: #EDE5D5;
+  --text-primary: #0A0F1E;
+  --text-secondary: #3A4060;
+  --accent: #2A7EDF;
+  --accent-secondary: #1A5BA8;
+  --border-subtle: rgba(10, 15, 30, 0.10);
+  --glow: rgba(42, 126, 223, 0.18);
+  --particle-color: 10,15,30;
 }
 
 @layer base {
@@ -31,6 +45,7 @@
     font-family: var(--font-body);
     color: var(--text-primary);
     cursor: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   a, button, [role="button"] {

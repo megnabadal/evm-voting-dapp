@@ -105,7 +105,10 @@ function CreateForm() {
 
       {/* Title */}
       <div>
-        <label className="mono mb-2 block text-[9px] tracking-[0.28em] text-[#4A9EFF]/55 uppercase">
+        <label
+          className="mono mb-2 block text-[9px] tracking-[0.28em] uppercase"
+          style={{ color: "color-mix(in srgb, var(--accent) 55%, transparent)" }}
+        >
           // Directive Title
         </label>
         <input
@@ -115,16 +118,27 @@ function CreateForm() {
           placeholder="e.g. Fund community grants"
           maxLength={100}
           required
-          className="mono w-full border border-[rgba(200,216,240,0.08)] bg-[rgba(15,22,40,0.5)] px-4 py-3.5 text-sm text-[#F5F0E8]/85 placeholder-[#A8A090]/30 outline-none transition-all duration-200 focus:border-[#4A9EFF]/35 focus:bg-[rgba(15,22,40,0.7)] focus:ring-1 focus:ring-[#4A9EFF]/12"
+          className="mono w-full border px-4 py-3.5 text-sm outline-none transition-all duration-200 focus:ring-1"
+          style={{
+            borderColor: "var(--border-subtle)",
+            background: "color-mix(in srgb, var(--bg-secondary) 50%, transparent)",
+            color: "color-mix(in srgb, var(--text-primary) 85%, transparent)",
+          }}
         />
-        <p className="mono mt-1.5 text-right text-[9px] tracking-[0.15em] text-[#A8A090]/25">
+        <p
+          className="mono mt-1.5 text-right text-[9px] tracking-[0.15em]"
+          style={{ color: "color-mix(in srgb, var(--text-secondary) 25%, transparent)" }}
+        >
           {title.length}/100
         </p>
       </div>
 
       {/* Description */}
       <div>
-        <label className="mono mb-2 block text-[9px] tracking-[0.28em] text-[#4A9EFF]/55 uppercase">
+        <label
+          className="mono mb-2 block text-[9px] tracking-[0.28em] uppercase"
+          style={{ color: "color-mix(in srgb, var(--accent) 55%, transparent)" }}
+        >
           // Mission Description
         </label>
         <textarea
@@ -134,16 +148,27 @@ function CreateForm() {
           maxLength={500}
           rows={5}
           required
-          className="mono w-full resize-none border border-[rgba(200,216,240,0.08)] bg-[rgba(15,22,40,0.5)] px-4 py-3.5 text-sm text-[#F5F0E8]/85 placeholder-[#A8A090]/30 outline-none transition-all duration-200 focus:border-[#4A9EFF]/35 focus:bg-[rgba(15,22,40,0.7)] focus:ring-1 focus:ring-[#4A9EFF]/12"
+          className="mono w-full resize-none border px-4 py-3.5 text-sm outline-none transition-all duration-200 focus:ring-1"
+          style={{
+            borderColor: "var(--border-subtle)",
+            background: "color-mix(in srgb, var(--bg-secondary) 50%, transparent)",
+            color: "color-mix(in srgb, var(--text-primary) 85%, transparent)",
+          }}
         />
-        <p className="mono mt-1.5 text-right text-[9px] tracking-[0.15em] text-[#A8A090]/25">
+        <p
+          className="mono mt-1.5 text-right text-[9px] tracking-[0.15em]"
+          style={{ color: "color-mix(in srgb, var(--text-secondary) 25%, transparent)" }}
+        >
           {description.length}/500
         </p>
       </div>
 
       {/* Duration */}
       <div>
-        <label className="mono mb-3 block text-[9px] tracking-[0.28em] text-[#4A9EFF]/55 uppercase">
+        <label
+          className="mono mb-3 block text-[9px] tracking-[0.28em] uppercase"
+          style={{ color: "color-mix(in srgb, var(--accent) 55%, transparent)" }}
+        >
           // Operation Window
         </label>
         <div className="flex flex-wrap gap-2">
@@ -152,11 +177,21 @@ function CreateForm() {
               key={opt.value}
               type="button"
               onClick={() => setDuration(opt.value)}
-              className={`mono border px-4 py-2 text-[11px] font-medium tracking-[0.15em] uppercase transition-all duration-200 ${
+              className="mono border px-4 py-2 text-[11px] font-medium tracking-[0.15em] uppercase transition-all duration-200"
+              style={
                 duration === opt.value
-                  ? "border-[#4A9EFF]/45 bg-[#4A9EFF]/12 text-[#4A9EFF] shadow-[0_0_12px_rgba(74,158,255,0.12)]"
-                  : "border-[rgba(200,216,240,0.08)] bg-[rgba(15,22,40,0.4)] text-[#A8A090]/45 hover:border-[rgba(200,216,240,0.15)] hover:text-[#A8A090]/70"
-              }`}
+                  ? {
+                      borderColor: "color-mix(in srgb, var(--accent) 45%, transparent)",
+                      background: "color-mix(in srgb, var(--accent) 12%, transparent)",
+                      color: "var(--accent)",
+                      boxShadow: "0 0 12px color-mix(in srgb, var(--accent) 12%, transparent)",
+                    }
+                  : {
+                      borderColor: "var(--border-subtle)",
+                      background: "color-mix(in srgb, var(--bg-secondary) 40%, transparent)",
+                      color: "color-mix(in srgb, var(--text-secondary) 45%, transparent)",
+                    }
+              }
             >
               {opt.label}
             </button>
@@ -166,12 +201,30 @@ function CreateForm() {
 
       {/* Progress indicator */}
       {loading && (
-        <div className="relative border border-[rgba(200,216,240,0.08)] bg-[rgba(15,22,40,0.5)] p-5">
-          <span className="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l border-[#4A9EFF]/30" />
-          <span className="pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r border-[#4A9EFF]/30" />
+        <div
+          className="relative border p-5"
+          style={{
+            borderColor: "var(--border-subtle)",
+            background: "color-mix(in srgb, var(--bg-secondary) 50%, transparent)",
+          }}
+        >
+          <span
+            className="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l"
+            style={{ borderColor: "color-mix(in srgb, var(--accent) 30%, transparent)" }}
+          />
+          <span
+            className="pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r"
+            style={{ borderColor: "color-mix(in srgb, var(--accent) 30%, transparent)" }}
+          />
           <div className="mb-4 flex items-center gap-3">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-[rgba(74,158,255,0.25)] border-t-[#4A9EFF]" />
-            <span className="mono text-[11px] tracking-[0.15em] text-[#C8D8F0]/65 uppercase">
+            <span
+              className="h-4 w-4 animate-spin rounded-full border-2 border-t-[var(--accent)]"
+              style={{ borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)", borderTopColor: "var(--accent)" }}
+            />
+            <span
+              className="mono text-[11px] tracking-[0.15em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--accent-secondary) 65%, transparent)" }}
+            >
               {stepLabel[step]}
             </span>
           </div>
@@ -179,11 +232,15 @@ function CreateForm() {
             {["blockchain", "saving", "done"].map((s, i) => (
               <div
                 key={s}
-                className={`h-0.5 flex-1 transition-all duration-500 ${
+                className="h-0.5 flex-1 transition-all duration-500"
+                style={
                   stepIndex >= i
-                    ? "bg-[#4A9EFF] shadow-[0_0_6px_rgba(74,158,255,0.5)]"
-                    : "bg-[rgba(200,216,240,0.06)]"
-                }`}
+                    ? {
+                        background: "var(--accent)",
+                        boxShadow: "0 0 6px color-mix(in srgb, var(--accent) 50%, transparent)",
+                      }
+                    : { background: "color-mix(in srgb, var(--accent-secondary) 6%, transparent)" }
+                }
               />
             ))}
           </div>
@@ -192,16 +249,43 @@ function CreateForm() {
 
       {/* Pre-flight checklist */}
       {!loading && (
-        <div className="relative border border-[rgba(200,216,240,0.06)] bg-[rgba(10,15,30,0.4)] p-5">
-          <span className="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l border-[rgba(200,216,240,0.08)]" />
-          <span className="pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r border-[rgba(200,216,240,0.08)]" />
-          <p className="mono mb-3 text-[9px] font-medium tracking-[0.28em] text-[#A8A090]/35 uppercase">
+        <div
+          className="relative border p-5"
+          style={{
+            borderColor: "color-mix(in srgb, var(--accent-secondary) 6%, transparent)",
+            background: "color-mix(in srgb, var(--bg-primary) 40%, transparent)",
+          }}
+        >
+          <span
+            className="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l"
+            style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 8%, transparent)" }}
+          />
+          <span
+            className="pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r"
+            style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 8%, transparent)" }}
+          />
+          <p
+            className="mono mb-3 text-[9px] font-medium tracking-[0.28em] uppercase"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)" }}
+          >
             // Pre-flight Checklist
           </p>
-          <ul className="mono space-y-1.5 text-[11px] tracking-[0.08em] text-[#A8A090]/40">
-            <li><span className="text-[#4A9EFF]/45">›</span> Transaction requires Sepolia ETH for gas.</li>
-            <li><span className="text-[#4A9EFF]/45">›</span> Directives cannot be modified after submission.</li>
-            <li><span className="text-[#4A9EFF]/45">›</span> MetaMask confirmation required to proceed.</li>
+          <ul
+            className="mono space-y-1.5 text-[11px] tracking-[0.08em]"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 40%, transparent)" }}
+          >
+            <li>
+              <span style={{ color: "color-mix(in srgb, var(--accent) 45%, transparent)" }}>›</span>{" "}
+              Transaction requires Sepolia ETH for gas.
+            </li>
+            <li>
+              <span style={{ color: "color-mix(in srgb, var(--accent) 45%, transparent)" }}>›</span>{" "}
+              Directives cannot be modified after submission.
+            </li>
+            <li>
+              <span style={{ color: "color-mix(in srgb, var(--accent) 45%, transparent)" }}>›</span>{" "}
+              MetaMask confirmation required to proceed.
+            </li>
           </ul>
         </div>
       )}
@@ -210,7 +294,12 @@ function CreateForm() {
       <button
         type="submit"
         disabled={loading || !title.trim() || !description.trim()}
-        className="blue-glow-btn mono w-full border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 py-4 text-sm font-medium tracking-[0.18em] text-[#4A9EFF] uppercase transition-all duration-200 hover:bg-[#4A9EFF]/20 hover:border-[#4A9EFF]/60 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+        className="blue-glow-btn mono w-full border py-4 text-sm font-medium tracking-[0.18em] uppercase transition-all duration-200 hover:bg-[#4A9EFF]/20 hover:border-[#4A9EFF]/60 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+        style={{
+          borderColor: "color-mix(in srgb, var(--accent) 40%, transparent)",
+          background: "color-mix(in srgb, var(--accent) 10%, transparent)",
+          color: "var(--accent)",
+        }}
       >
         {stepLabel[step]}
       </button>
@@ -220,10 +309,13 @@ function CreateForm() {
 
 export default function CreateProposalPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#0A0F1E] text-[#F5F0E8]">
+    <div className="flex min-h-screen flex-col" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       {/* Ambient blue glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="animate-float-slow absolute -top-48 right-1/4 h-[500px] w-[500px] rounded-full bg-[#4A9EFF]/[0.05] blur-[140px]" />
+        <div
+          className="animate-float-slow absolute -top-48 right-1/4 h-[500px] w-[500px] rounded-full blur-[140px]"
+          style={{ background: "color-mix(in srgb, var(--accent) 5%, transparent)" }}
+        />
       </div>
 
       <Navbar />
@@ -233,37 +325,65 @@ export default function CreateProposalPage() {
         <div className="mb-10 animate-fade-up">
           <Link
             href="/proposals"
-            className="mono mb-6 inline-flex items-center gap-2 text-[10px] tracking-[0.25em] text-[#A8A090]/35 uppercase transition-colors duration-200 hover:text-[#C8D8F0]/60"
+            className="mono mb-6 inline-flex items-center gap-2 text-[10px] tracking-[0.25em] uppercase transition-colors duration-200"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)" }}
           >
             ← Back to Operations
           </Link>
-          <p className="mono mb-2 text-[9px] tracking-[0.35em] text-[#4A9EFF]/45 uppercase">
+          <p
+            className="mono mb-2 text-[9px] tracking-[0.35em] uppercase"
+            style={{ color: "color-mix(in srgb, var(--accent) 45%, transparent)" }}
+          >
             // Initiate Operation
           </p>
           <h1
-            className="text-3xl font-bold tracking-tight text-[#F5F0E8]/85 sm:text-4xl"
-            style={{ fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)" }}
+            className="text-3xl font-bold tracking-tight sm:text-4xl"
+            style={{
+              fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
+              color: "color-mix(in srgb, var(--text-primary) 85%, transparent)",
+            }}
           >
             New Directive
           </h1>
-          <p className="mono mt-3 text-[11px] tracking-[0.15em] text-[#A8A090]/40 uppercase">
+          <p
+            className="mono mt-3 text-[11px] tracking-[0.15em] uppercase"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 40%, transparent)" }}
+          >
             Submit an on-chain directive for operator consensus
           </p>
         </div>
 
         {/* Form card */}
-        <div className="animate-fade-up-1 relative overflow-hidden p-7 sm:p-9" style={{
-          background: "rgba(15, 22, 40, 0.8)",
-          backdropFilter: "blur(24px)",
-          border: "1px solid rgba(200, 216, 240, 0.08)",
-        }}>
+        <div
+          className="animate-fade-up-1 relative overflow-hidden p-7 sm:p-9"
+          style={{
+            background: "color-mix(in srgb, var(--bg-secondary) 80%, transparent)",
+            backdropFilter: "blur(24px)",
+            border: "1px solid var(--border-subtle)",
+          }}
+        >
           {/* Blue corner brackets */}
-          <span className="pointer-events-none absolute top-0 left-0 h-5 w-5 border-t-2 border-l-2 border-[#4A9EFF]/25" />
-          <span className="pointer-events-none absolute top-0 right-0 h-5 w-5 border-t-2 border-r-2 border-[#4A9EFF]/25" />
-          <span className="pointer-events-none absolute bottom-0 left-0 h-5 w-5 border-b-2 border-l-2 border-[#4A9EFF]/25" />
-          <span className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-[#4A9EFF]/25" />
+          <span
+            className="pointer-events-none absolute top-0 left-0 h-5 w-5 border-t-2 border-l-2"
+            style={{ borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)" }}
+          />
+          <span
+            className="pointer-events-none absolute top-0 right-0 h-5 w-5 border-t-2 border-r-2"
+            style={{ borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)" }}
+          />
+          <span
+            className="pointer-events-none absolute bottom-0 left-0 h-5 w-5 border-b-2 border-l-2"
+            style={{ borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)" }}
+          />
+          <span
+            className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2"
+            style={{ borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)" }}
+          />
 
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/22 to-transparent" />
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-px"
+            style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 22%, transparent), transparent)" }}
+          />
 
           <WalletGuard message="Connect your wallet to submit a directive.">
             <CreateForm />

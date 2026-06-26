@@ -21,10 +21,12 @@ export default function Navbar() {
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-700 ${
-        scrolled
-          ? "border-b border-[rgba(200,216,240,0.055)] bg-[#060D1A]/97 backdrop-blur-2xl"
-          : "border-b border-transparent bg-transparent"
+        scrolled ? "border-b backdrop-blur-2xl" : "border-b border-transparent bg-transparent"
       }`}
+      style={scrolled ? {
+        borderColor: "color-mix(in srgb, var(--accent-secondary) 5.5%, transparent)",
+        background: "color-mix(in srgb, var(--bg-dark) 97%, transparent)",
+      } : {}}
     >
       {/* Blue accent thread — only visible when scrolled */}
       <div
@@ -32,7 +34,7 @@ export default function Navbar() {
           scrolled ? "opacity-100" : "opacity-0"
         }`}
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(74,158,255,0.40), transparent)",
+          background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 40%, transparent), transparent)",
         }}
       />
 
@@ -42,12 +44,18 @@ export default function Navbar() {
           href="/"
           className="group flex items-center gap-2.5 transition-opacity duration-300 hover:opacity-65"
         >
-          <span className="mono text-[13px] font-medium tracking-[0.30em] text-[#C8D8F0]/88 uppercase">
+          <span
+            className="mono text-[13px] font-medium tracking-[0.30em] uppercase"
+            style={{ color: "color-mix(in srgb, var(--accent-secondary) 88%, transparent)" }}
+          >
             VoteChain
           </span>
           <span
-            className="h-1.5 w-1.5 rounded-full bg-[#4A9EFF] transition-all duration-300 group-hover:shadow-[0_0_10px_rgba(74,158,255,0.9)]"
-            style={{ boxShadow: "0 0 6px rgba(74, 158, 255, 0.80)" }}
+            className="h-1.5 w-1.5 rounded-full transition-all duration-300 group-hover:shadow-[0_0_10px_rgba(74,158,255,0.9)]"
+            style={{
+              background: "var(--accent)",
+              boxShadow: "0 0 6px color-mix(in srgb, var(--accent) 80%, transparent)",
+            }}
           />
         </Link>
 
@@ -60,10 +68,14 @@ export default function Navbar() {
             <Link
               key={href}
               href={href}
-              className="group relative mono text-[10px] tracking-[0.28em] text-[#A8A090]/48 uppercase transition-colors duration-300 hover:text-[#C8D8F0]/85"
+              className="group relative mono text-[10px] tracking-[0.28em] uppercase transition-colors duration-300"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 48%, transparent)" }}
             >
               {label}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-[#4A9EFF] transition-all duration-300 group-hover:w-full" />
+              <span
+                className="absolute -bottom-1 left-0 h-px w-0 transition-all duration-300 group-hover:w-full"
+                style={{ background: "var(--accent)" }}
+              />
             </Link>
           ))}
         </div>
@@ -96,26 +108,32 @@ export default function Navbar() {
           </button>
 
           {!mounted ? (
-            <div className="h-7 w-28 animate-pulse rounded-sm bg-[rgba(200,216,240,0.04)]" />
+            <div
+              className="h-7 w-28 animate-pulse rounded-sm"
+              style={{ background: "color-mix(in srgb, var(--accent-secondary) 4%, transparent)" }}
+            />
           ) : isConnected ? (
             <div className="flex items-center gap-2.5">
               {/* Network indicator */}
               {network && (
                 <div
                   className={`hidden items-center gap-2 sm:inline-flex ${
-                    network.isSupported ? "text-emerald-400/65" : "text-[#4A9EFF]/65"
+                    network.isSupported ? "text-emerald-400/65" : ""
                   }`}
+                  style={!network.isSupported ? { color: "color-mix(in srgb, var(--accent) 65%, transparent)" } : {}}
                 >
                   <span className="relative flex h-1 w-1 rounded-full">
                     <span
                       className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-55 ${
-                        network.isSupported ? "bg-emerald-400" : "bg-[#4A9EFF]"
+                        network.isSupported ? "bg-emerald-400" : ""
                       }`}
+                      style={!network.isSupported ? { background: "var(--accent)" } : {}}
                     />
                     <span
                       className={`relative inline-flex h-1 w-1 rounded-full ${
-                        network.isSupported ? "bg-emerald-400" : "bg-[#4A9EFF]"
+                        network.isSupported ? "bg-emerald-400" : ""
                       }`}
+                      style={!network.isSupported ? { background: "var(--accent)" } : {}}
                     />
                   </span>
                   <span className="mono text-[9px] tracking-[0.22em] uppercase">
@@ -125,14 +143,29 @@ export default function Navbar() {
               )}
 
               {/* Address pill */}
-              <div className="hidden items-center gap-2 border border-[rgba(200,216,240,0.07)] bg-[rgba(15,22,40,0.55)] px-3 py-1.5 sm:inline-flex">
-                <span className="mono text-[10px] text-[#A8A090]/78">{shortAddress}</span>
+              <div
+                className="hidden items-center gap-2 border px-3 py-1.5 sm:inline-flex"
+                style={{
+                  borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
+                  background: "color-mix(in srgb, var(--bg-secondary) 55%, transparent)",
+                }}
+              >
+                <span
+                  className="mono text-[10px]"
+                  style={{ color: "color-mix(in srgb, var(--text-secondary) 78%, transparent)" }}
+                >
+                  {shortAddress}
+                </span>
               </div>
 
               {/* Disconnect */}
               <button
                 onClick={disconnect}
-                className="mono border border-[rgba(200,216,240,0.055)] bg-transparent px-3 py-1.5 text-[9px] tracking-[0.18em] text-[#A8A090]/35 uppercase transition-all duration-300 hover:border-[#4A9EFF]/18 hover:text-[#4A9EFF]/55"
+                className="mono border bg-transparent px-3 py-1.5 text-[9px] tracking-[0.18em] uppercase transition-all duration-300 hover:border-[#4A9EFF]/18 hover:text-[#4A9EFF]/55"
+                style={{
+                  borderColor: "color-mix(in srgb, var(--accent-secondary) 5.5%, transparent)",
+                  color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)",
+                }}
               >
                 Disconnect
               </button>
@@ -140,7 +173,12 @@ export default function Navbar() {
           ) : (
             <button
               onClick={connect}
-              className="animate-glow-pulse mono border border-[#4A9EFF]/32 bg-[#4A9EFF]/[0.09] px-5 py-2 text-[10px] font-medium tracking-[0.20em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/16 hover:border-[#4A9EFF]/52 active:scale-[0.97]"
+              className="animate-glow-pulse mono border px-5 py-2 text-[10px] font-medium tracking-[0.20em] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/16 hover:border-[#4A9EFF]/52 active:scale-[0.97]"
+              style={{
+                borderColor: "color-mix(in srgb, var(--accent) 32%, transparent)",
+                background: "color-mix(in srgb, var(--accent) 9%, transparent)",
+                color: "var(--accent)",
+              }}
             >
               Connect Wallet
             </button>

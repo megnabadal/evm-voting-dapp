@@ -48,8 +48,11 @@ export default function CustomCursor() {
         aria-hidden="true"
       >
         <div
-          className="h-1 w-1 rounded-full bg-[#4A9EFF]"
-          style={{ boxShadow: "0 0 6px rgba(74, 158, 255, 0.9)" }}
+          className="h-1 w-1 rounded-full"
+          style={{
+            background: "var(--accent)",
+            boxShadow: "0 0 6px color-mix(in srgb, var(--accent) 90%, transparent)",
+          }}
         />
       </div>
 
@@ -61,14 +64,27 @@ export default function CustomCursor() {
       >
         <div className="relative flex h-9 w-9 items-center justify-center">
           {/* Horizontal arms */}
-          <div className="absolute left-0 top-1/2 h-px w-2.5 -translate-y-1/2 bg-[#C8D8F0]/30" />
-          <div className="absolute right-0 top-1/2 h-px w-2.5 -translate-y-1/2 bg-[#C8D8F0]/30" />
+          <div
+            className="absolute left-0 top-1/2 h-px w-2.5 -translate-y-1/2"
+            style={{ background: "color-mix(in srgb, var(--accent-secondary) 30%, transparent)" }}
+          />
+          <div
+            className="absolute right-0 top-1/2 h-px w-2.5 -translate-y-1/2"
+            style={{ background: "color-mix(in srgb, var(--accent-secondary) 30%, transparent)" }}
+          />
           {/* Vertical arms */}
-          <div className="absolute top-0 left-1/2 h-2.5 w-px -translate-x-1/2 bg-[#C8D8F0]/30" />
-          <div className="absolute bottom-0 left-1/2 h-2.5 w-px -translate-x-1/2 bg-[#C8D8F0]/30" />
+          <div
+            className="absolute top-0 left-1/2 h-2.5 w-px -translate-x-1/2"
+            style={{ background: "color-mix(in srgb, var(--accent-secondary) 30%, transparent)" }}
+          />
+          <div
+            className="absolute bottom-0 left-1/2 h-2.5 w-px -translate-x-1/2"
+            style={{ background: "color-mix(in srgb, var(--accent-secondary) 30%, transparent)" }}
+          />
           {/* Center gap ring */}
           <div
-            className="h-3.5 w-3.5 rounded-full border border-[#4A9EFF]/20"
+            className="h-3.5 w-3.5 rounded-full border"
+            style={{ borderColor: "color-mix(in srgb, var(--accent) 20%, transparent)" }}
           />
         </div>
       </div>

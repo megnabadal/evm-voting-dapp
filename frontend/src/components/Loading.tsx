@@ -14,9 +14,10 @@ export default function Loading({
   };
 
   return (
-    <div className="flex items-center gap-3 text-[#A8A090]/60">
+    <div className="flex items-center gap-3" style={{ color: "color-mix(in srgb, var(--text-secondary) 60%, transparent)" }}>
       <span
-        className={`${sizes[size]} animate-spin rounded-full border-[rgba(200,216,240,0.08)] border-t-[#4A9EFF]`}
+        className={`${sizes[size]} animate-spin rounded-full`}
+        style={{ borderColor: "var(--border-subtle)", borderTopColor: "var(--accent)" }}
       />
       {message && <span className="mono text-sm tracking-[0.12em]">{message}</span>}
     </div>

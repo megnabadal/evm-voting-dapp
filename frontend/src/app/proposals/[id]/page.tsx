@@ -53,57 +53,72 @@ function VoteTransactionList({
   const [page, setPage] = useState(1);
 
   const isYes = direction === "yes";
-  const accentText = isYes ? "text-[#4A9EFF]" : "text-[#A8A090]/65";
-  const accentBorder = isYes
-    ? "border-[rgba(74,158,255,0.12)]"
-    : "border-[rgba(200,216,240,0.06)]";
-  const accentDot = isYes
-    ? "bg-[#4A9EFF] shadow-[0_0_6px_rgba(74,158,255,0.7)]"
-    : "bg-[#A8A090]/40";
-  const label = isYes ? "FOR" : "AGAINST";
   const displayedVotes = expanded ? votes.slice(0, page * PAGE_SIZE) : [];
   const hasMore = page * PAGE_SIZE < votes.length;
+  const label = isYes ? "FOR" : "AGAINST";
 
   return (
     <div
-      className={`relative overflow-hidden border bg-[rgba(10,15,30,0.5)] transition-all duration-300 ${accentBorder} hover:bg-[rgba(15,22,40,0.65)]`}
+      className="relative overflow-hidden transition-all duration-300"
+      style={{
+        border: `1px solid ${isYes ? "color-mix(in srgb, var(--accent) 12%, transparent)" : "color-mix(in srgb, var(--accent-secondary) 6%, transparent)"}`,
+        background: "color-mix(in srgb, var(--bg-primary) 50%, transparent)",
+      }}
     >
       {/* Blue top edge if yes */}
       {isYes && (
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/30 to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 30%, transparent), transparent)" }}
+        />
       )}
       <span
-        className={`pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l ${
-          isYes ? "border-[#4A9EFF]/22" : "border-[rgba(200,216,240,0.08)]"
-        }`}
+        className="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l"
+        style={{ borderColor: isYes ? "color-mix(in srgb, var(--accent) 22%, transparent)" : "color-mix(in srgb, var(--accent-secondary) 8%, transparent)" }}
       />
       <span
-        className={`pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r ${
-          isYes ? "border-[#4A9EFF]/22" : "border-[rgba(200,216,240,0.08)]"
-        }`}
+        className="pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r"
+        style={{ borderColor: isYes ? "color-mix(in srgb, var(--accent) 22%, transparent)" : "color-mix(in srgb, var(--accent-secondary) 8%, transparent)" }}
       />
 
       <button
         onClick={() => setExpanded((prev) => !prev)}
-        className="flex w-full items-center justify-between px-6 py-5 text-left transition-colors hover:bg-[rgba(74,158,255,0.02)]"
+        className="flex w-full items-center justify-between px-6 py-5 text-left transition-colors"
+        style={{ background: "transparent" }}
         aria-expanded={expanded}
       >
         <div className="flex items-center gap-3">
-          <span className={`h-1.5 w-1.5 rounded-full ${accentDot}`} />
-          <span className={`mono text-[10px] font-medium tracking-[0.28em] uppercase ${accentText}`}>
+          <span
+            className="h-1.5 w-1.5 rounded-full"
+            style={
+              isYes
+                ? { background: "var(--accent)", boxShadow: "0 0 6px color-mix(in srgb, var(--accent) 70%, transparent)" }
+                : { background: "color-mix(in srgb, var(--text-secondary) 40%, transparent)" }
+            }
+          />
+          <span
+            className="mono text-[10px] font-medium tracking-[0.28em] uppercase"
+            style={{ color: isYes ? "var(--accent)" : "color-mix(in srgb, var(--text-secondary) 65%, transparent)" }}
+          >
             {label} VOTES
           </span>
         </div>
         <div className="flex items-center gap-5">
           <span
-            className={`text-2xl font-bold tabular-nums ${accentText}`}
-            style={{ fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)" }}
+            className="text-2xl font-bold tabular-nums"
+            style={{
+              fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
+              color: isYes ? "var(--accent)" : "color-mix(in srgb, var(--text-secondary) 65%, transparent)",
+            }}
           >
             {total.toLocaleString()}
           </span>
           <svg
-            className="text-[#A8A090]/30 transition-transform duration-300"
-            style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}
+            className="transition-transform duration-300"
+            style={{
+              transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+              color: "color-mix(in srgb, var(--text-secondary) 30%, transparent)",
+            }}
             width="14"
             height="14"
             viewBox="0 0 16 16"
@@ -121,23 +136,35 @@ function VoteTransactionList({
       </button>
 
       {expanded && (
-        <div className="border-t border-[rgba(200,216,240,0.05)]">
+        <div
+          className="border-t"
+          style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 5%, transparent)" }}
+        >
           {votes.length === 0 ? (
-            <p className="mono px-6 py-6 text-[11px] tracking-[0.15em] text-[#A8A090]/28 uppercase">
+            <p
+              className="mono px-6 py-6 text-[11px] tracking-[0.15em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
+            >
               No {label.toLowerCase()} votes on record.
             </p>
           ) : (
             <>
               <div
-                className="mono grid px-6 py-2.5 text-[9px] font-medium tracking-[0.25em] text-[#A8A090]/22 uppercase"
-                style={{ gridTemplateColumns: "1fr 1fr auto" }}
+                className="mono grid px-6 py-2.5 text-[9px] font-medium tracking-[0.25em] uppercase"
+                style={{
+                  gridTemplateColumns: "1fr 1fr auto",
+                  color: "color-mix(in srgb, var(--text-secondary) 22%, transparent)",
+                }}
               >
                 <span>TX Hash</span>
                 <span>Address</span>
                 <span>Block</span>
               </div>
 
-              <div className="divide-y divide-[rgba(200,216,240,0.035)]">
+              <div
+                className="divide-y"
+                style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 3.5%, transparent)" }}
+              >
                 {displayedVotes.map((vote) => (
                   <div
                     key={vote.txHash}
@@ -148,7 +175,8 @@ function VoteTransactionList({
                       href={`${SEPOLIA_TX_URL}${vote.txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`mono group flex items-center gap-1.5 text-[12px] transition-opacity hover:opacity-75 ${accentText}`}
+                      className="mono group flex items-center gap-1.5 text-[12px] transition-opacity hover:opacity-75"
+                      style={{ color: isYes ? "var(--accent)" : "color-mix(in srgb, var(--text-secondary) 65%, transparent)" }}
                       title={vote.txHash}
                     >
                       {truncate(vote.txHash)}
@@ -169,12 +197,16 @@ function VoteTransactionList({
                       </svg>
                     </a>
                     <span
-                      className="mono truncate pr-4 text-[12px] text-[#A8A090]/38"
+                      className="mono truncate pr-4 text-[12px]"
+                      style={{ color: "color-mix(in srgb, var(--text-secondary) 38%, transparent)" }}
                       title={vote.voter}
                     >
                       {truncate(vote.voter, 6, 4)}
                     </span>
-                    <span className="mono text-[11px] tabular-nums text-[#A8A090]/28">
+                    <span
+                      className="mono text-[11px] tabular-nums"
+                      style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
+                    >
                       #{vote.blockNumber.toLocaleString()}
                     </span>
                   </div>
@@ -182,10 +214,14 @@ function VoteTransactionList({
               </div>
 
               {hasMore && (
-                <div className="border-t border-[rgba(200,216,240,0.04)] px-6 py-3">
+                <div
+                  className="border-t px-6 py-3"
+                  style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 4%, transparent)" }}
+                >
                   <button
                     onClick={() => setPage((p) => p + 1)}
-                    className="mono text-[10px] tracking-[0.18em] text-[#A8A090]/28 uppercase transition-colors hover:text-[#4A9EFF]/55"
+                    className="mono text-[10px] tracking-[0.18em] uppercase transition-colors hover:text-[#4A9EFF]/55"
+                    style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
                   >
                     Load more ({votes.length - page * PAGE_SIZE} remaining)
                   </button>
@@ -285,10 +321,27 @@ function ProposalDetail({ id }: { id: number }) {
   if (loading) return <Loading message="Loading proposal…" />;
   if (error)
     return (
-      <div className="relative border border-[rgba(74,158,255,0.14)] bg-[rgba(74,158,255,0.04)] p-5">
-        <span className="pointer-events-none absolute top-0 left-0 h-2 w-2 border-t border-l border-[#4A9EFF]/30" />
-        <span className="pointer-events-none absolute bottom-0 right-0 h-2 w-2 border-b border-r border-[#4A9EFF]/30" />
-        <p className="mono text-sm text-[#C8D8F0]/65">{error}</p>
+      <div
+        className="relative border p-5"
+        style={{
+          border: "1px solid color-mix(in srgb, var(--accent) 14%, transparent)",
+          background: "color-mix(in srgb, var(--accent) 4%, transparent)",
+        }}
+      >
+        <span
+          className="pointer-events-none absolute top-0 left-0 h-2 w-2 border-t border-l"
+          style={{ borderColor: "color-mix(in srgb, var(--accent) 30%, transparent)" }}
+        />
+        <span
+          className="pointer-events-none absolute bottom-0 right-0 h-2 w-2 border-b border-r"
+          style={{ borderColor: "color-mix(in srgb, var(--accent) 30%, transparent)" }}
+        />
+        <p
+          className="mono text-sm"
+          style={{ color: "color-mix(in srgb, var(--accent-secondary) 65%, transparent)" }}
+        >
+          {error}
+        </p>
       </div>
     );
   if (!proposal) return null;
@@ -299,23 +352,26 @@ function ProposalDetail({ id }: { id: number }) {
   const statusCfg =
     proposal.status === "Active"
       ? {
-          text: "text-emerald-400",
-          dot: "bg-emerald-400 shadow-[0_0_6px_rgba(34,197,94,0.8)]",
-          border: "border-emerald-500/18",
+          textStyle: { color: "rgb(52 211 153)" },
+          dotClass: "bg-emerald-400 shadow-[0_0_6px_rgba(34,197,94,0.8)]",
+          borderStyle: { borderColor: "rgba(16,185,129,0.18)" },
           label: "ACTIVE",
+          ping: true,
         }
       : proposal.status === "Pending"
       ? {
-          text: "text-[#C8D8F0]/70",
-          dot: "bg-[#C8D8F0]/55",
-          border: "border-[rgba(200,216,240,0.10)]",
+          textStyle: { color: "color-mix(in srgb, var(--accent-secondary) 70%, transparent)" },
+          dotClass: "",
+          borderStyle: { borderColor: "color-mix(in srgb, var(--accent-secondary) 10%, transparent)" },
           label: "PENDING",
+          ping: false,
         }
       : {
-          text: "text-[#A8A090]/48",
-          dot: "bg-[#A8A090]/28",
-          border: "border-[rgba(200,216,240,0.06)]",
+          textStyle: { color: "color-mix(in srgb, var(--text-secondary) 48%, transparent)" },
+          dotClass: "",
+          borderStyle: { borderColor: "color-mix(in srgb, var(--accent-secondary) 6%, transparent)" },
           label: "CLOSED",
+          ping: false,
         };
 
   return (
@@ -332,30 +388,60 @@ function ProposalDetail({ id }: { id: number }) {
       <div
         className="relative overflow-hidden"
         style={{
-          background: "linear-gradient(160deg, rgba(15, 22, 40, 0.90) 0%, rgba(6, 13, 26, 0.95) 100%)",
-          border: "1px solid rgba(200, 216, 240, 0.07)",
+          background: "linear-gradient(160deg, color-mix(in srgb, var(--bg-secondary) 90%, transparent) 0%, color-mix(in srgb, var(--bg-dark) 95%, transparent) 100%)",
+          border: "1px solid color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
         }}
       >
         {/* Blue top accent */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/45 to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 45%, transparent), transparent)" }}
+        />
 
         {/* Corner frames */}
-        <span className="pointer-events-none absolute top-0 left-0 h-8 w-8 border-t-2 border-l-2 border-[#4A9EFF]/22" />
-        <span className="pointer-events-none absolute top-0 right-0 h-8 w-8 border-t-2 border-r-2 border-[#4A9EFF]/22" />
-        <span className="pointer-events-none absolute bottom-0 left-0 h-8 w-8 border-b-2 border-l-2 border-[#4A9EFF]/22" />
-        <span className="pointer-events-none absolute bottom-0 right-0 h-8 w-8 border-b-2 border-r-2 border-[#4A9EFF]/22" />
+        <span
+          className="pointer-events-none absolute top-0 left-0 h-8 w-8 border-t-2 border-l-2"
+          style={{ borderColor: "color-mix(in srgb, var(--accent) 22%, transparent)" }}
+        />
+        <span
+          className="pointer-events-none absolute top-0 right-0 h-8 w-8 border-t-2 border-r-2"
+          style={{ borderColor: "color-mix(in srgb, var(--accent) 22%, transparent)" }}
+        />
+        <span
+          className="pointer-events-none absolute bottom-0 left-0 h-8 w-8 border-b-2 border-l-2"
+          style={{ borderColor: "color-mix(in srgb, var(--accent) 22%, transparent)" }}
+        />
+        <span
+          className="pointer-events-none absolute bottom-0 right-0 h-8 w-8 border-b-2 border-r-2"
+          style={{ borderColor: "color-mix(in srgb, var(--accent) 22%, transparent)" }}
+        />
 
         {/* Atmospheric inner glow */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#4A9EFF]/[0.02] to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "linear-gradient(to bottom right, color-mix(in srgb, var(--accent) 2%, transparent), transparent)" }}
+        />
 
         <div className="relative p-8 sm:p-12">
           {/* Classification strip */}
-          <div className="mb-8 flex items-center gap-3 border-b border-[rgba(200,216,240,0.05)] pb-5">
-            <span className="mono text-[9px] tracking-[0.42em] text-[#4A9EFF]/38 uppercase">
+          <div
+            className="mb-8 flex items-center gap-3 border-b pb-5"
+            style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 5%, transparent)" }}
+          >
+            <span
+              className="mono text-[9px] tracking-[0.42em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--accent) 38%, transparent)" }}
+            >
               // Proposal
             </span>
-            <span className="h-px flex-1 bg-[rgba(200,216,240,0.04)]" />
-            <span className="mono text-[9px] tracking-[0.28em] text-[#A8A090]/22 uppercase">
+            <span
+              className="h-px flex-1"
+              style={{ background: "color-mix(in srgb, var(--accent-secondary) 4%, transparent)" }}
+            />
+            <span
+              className="mono text-[9px] tracking-[0.28em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 22%, transparent)" }}
+            >
               OP-{String(proposal.id).padStart(3, "0")}
             </span>
           </div>
@@ -363,33 +449,53 @@ function ProposalDetail({ id }: { id: number }) {
           {/* Status + deadline */}
           <div className="mb-8 flex flex-wrap items-center gap-4">
             <span
-              className={`mono inline-flex items-center gap-2.5 border px-3.5 py-1.5 text-[9px] font-medium tracking-[0.28em] uppercase ${statusCfg.border} ${statusCfg.text}`}
+              className="mono inline-flex items-center gap-2.5 border px-3.5 py-1.5 text-[9px] font-medium tracking-[0.28em] uppercase"
+              style={{ ...statusCfg.borderStyle, ...statusCfg.textStyle }}
             >
-              <span className={`relative flex h-1.5 w-1.5`}>
-                <span className={`absolute inline-flex h-full w-full rounded-full opacity-60 ${proposal.status === "Active" ? "animate-ping bg-emerald-400" : ""}`} />
-                <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${statusCfg.dot}`} />
+              <span className="relative flex h-1.5 w-1.5">
+                {statusCfg.ping && (
+                  <span className={`absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping ${statusCfg.dotClass}`} />
+                )}
+                <span
+                  className={`relative inline-flex h-1.5 w-1.5 rounded-full ${statusCfg.ping ? statusCfg.dotClass : ""}`}
+                  style={!statusCfg.ping && proposal.status === "Closed"
+                    ? { background: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }
+                    : !statusCfg.ping && proposal.status === "Pending"
+                    ? { background: "color-mix(in srgb, var(--accent-secondary) 55%, transparent)" }
+                    : {}
+                  }
+                />
               </span>
               {statusCfg.label}
             </span>
-            <span className="mono text-[9px] tracking-[0.2em] text-[#A8A090]/28 uppercase">
+            <span
+              className="mono text-[9px] tracking-[0.2em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
+            >
               Deadline:{" "}
-              <span className="text-[#A8A090]/48">{deadline.toLocaleString()}</span>
+              <span style={{ color: "color-mix(in srgb, var(--text-secondary) 48%, transparent)" }}>
+                {deadline.toLocaleString()}
+              </span>
             </span>
           </div>
 
           {/* Title */}
           <h1
-            className="mb-6 font-bold leading-tight tracking-[-0.02em] text-[#F5F0E8]/90"
+            className="mb-6 font-bold leading-tight tracking-[-0.02em]"
             style={{
               fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
               fontSize: "clamp(1.8rem, 4vw, 3.2rem)",
+              color: "color-mix(in srgb, var(--text-primary) 90%, transparent)",
             }}
           >
             {proposal.title}
           </h1>
 
           {/* Description */}
-          <p className="mb-12 text-[14px] leading-[1.85] text-[#A8A090]/60">
+          <p
+            className="mb-12 text-[14px] leading-[1.85]"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 60%, transparent)" }}
+          >
             {proposal.description}
           </p>
 
@@ -397,36 +503,54 @@ function ProposalDetail({ id }: { id: number }) {
           <div
             className="relative p-7"
             style={{
-              border: "1px solid rgba(200, 216, 240, 0.05)",
-              background: "rgba(6, 13, 26, 0.55)",
+              border: "1px solid color-mix(in srgb, var(--accent-secondary) 5%, transparent)",
+              background: "color-mix(in srgb, var(--bg-dark) 55%, transparent)",
             }}
           >
-            <span className="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l border-[rgba(200,216,240,0.08)]" />
-            <span className="pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r border-[rgba(200,216,240,0.08)]" />
+            <span
+              className="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t border-l"
+              style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 8%, transparent)" }}
+            />
+            <span
+              className="pointer-events-none absolute bottom-0 right-0 h-3 w-3 border-b border-r"
+              style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 8%, transparent)" }}
+            />
 
-            <p className="mono mb-6 text-[9px] tracking-[0.38em] text-[#4A9EFF]/32 uppercase">
+            <p
+              className="mono mb-6 text-[9px] tracking-[0.38em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--accent) 32%, transparent)" }}
+            >
               // Vote Distribution
             </p>
 
             {/* Labels */}
             <div className="mb-3 flex items-center justify-between">
-              <span className="mono text-[13px] font-semibold tabular-nums tracking-[0.10em] text-[#4A9EFF]/85 uppercase">
+              <span
+                className="mono text-[13px] font-semibold tabular-nums tracking-[0.10em] uppercase"
+                style={{ color: "color-mix(in srgb, var(--accent) 85%, transparent)" }}
+              >
                 {proposal.yesPercent}% For
               </span>
-              <span className="mono text-[13px] font-semibold tabular-nums tracking-[0.10em] text-[#A8A090]/52 uppercase">
+              <span
+                className="mono text-[13px] font-semibold tabular-nums tracking-[0.10em] uppercase"
+                style={{ color: "color-mix(in srgb, var(--text-secondary) 52%, transparent)" }}
+              >
                 {noPercent}% Against
               </span>
             </div>
 
-            {/* Vote bar — thick and dramatic */}
-            <div className="mb-5 h-2 w-full overflow-hidden bg-[rgba(200,216,240,0.04)]">
+            {/* Vote bar */}
+            <div
+              className="mb-5 h-2 w-full overflow-hidden"
+              style={{ background: "color-mix(in srgb, var(--accent-secondary) 4%, transparent)" }}
+            >
               <div className="flex h-full w-full">
                 {proposal.yesPercent > 0 && (
                   <div
                     className="h-full animate-bar-slide"
                     style={{
                       width: `${proposal.yesPercent}%`,
-                      background: "linear-gradient(90deg, rgba(74,158,255,0.28) 0%, rgba(74,158,255,0.88) 100%)",
+                      background: "linear-gradient(90deg, color-mix(in srgb, var(--accent) 28%, transparent) 0%, color-mix(in srgb, var(--accent) 88%, transparent) 100%)",
                     }}
                   />
                 )}
@@ -435,40 +559,62 @@ function ProposalDetail({ id }: { id: number }) {
                     className="h-full"
                     style={{
                       width: `${noPercent}%`,
-                      background: "linear-gradient(90deg, rgba(168,160,144,0.10) 0%, rgba(168,160,144,0.35) 100%)",
+                      background: "linear-gradient(90deg, color-mix(in srgb, var(--text-secondary) 10%, transparent) 0%, color-mix(in srgb, var(--text-secondary) 35%, transparent) 100%)",
                     }}
                   />
                 )}
               </div>
             </div>
 
-            <p className="mono text-[10px] tracking-[0.18em] text-[#A8A090]/28 uppercase">
+            <p
+              className="mono text-[10px] tracking-[0.18em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
+            >
               {proposal.totalVotes.toLocaleString()} total ·{" "}
-              <span className="text-[#4A9EFF]/52">{proposal.yesVotes} for</span> ·{" "}
-              <span className="text-[#A8A090]/38">{proposal.noVotes} against</span>
+              <span style={{ color: "color-mix(in srgb, var(--accent) 52%, transparent)" }}>{proposal.yesVotes} for</span> ·{" "}
+              <span style={{ color: "color-mix(in srgb, var(--text-secondary) 38%, transparent)" }}>{proposal.noVotes} against</span>
             </p>
           </div>
 
           {/* Vote buttons */}
           {proposal.status === "Active" && (
             <div className="mt-8">
-              <p className="mono mb-4 text-[9px] tracking-[0.38em] text-[#4A9EFF]/28 uppercase">
+              <p
+                className="mono mb-4 text-[9px] tracking-[0.38em] uppercase"
+                style={{ color: "color-mix(in srgb, var(--accent) 28%, transparent)" }}
+              >
                 // Cast Your Vote
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => handleVote(true)}
                   disabled={voting}
-                  className="group mono relative flex-1 border border-[#4A9EFF]/18 bg-[#4A9EFF]/[0.06] py-4 text-[11px] font-medium tracking-[0.2em] text-[#4A9EFF]/78 uppercase transition-all duration-300 hover:border-[#4A9EFF]/42 hover:bg-[#4A9EFF]/[0.12] hover:text-[#4A9EFF] hover:shadow-[0_0_40px_rgba(74,158,255,0.10)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-25"
+                  className="group mono relative flex-1 border py-4 text-[11px] font-medium tracking-[0.2em] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/[0.12] hover:border-[#4A9EFF]/42 hover:shadow-[0_0_40px_rgba(74,158,255,0.10)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-25"
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--accent) 18%, transparent)",
+                    background: "color-mix(in srgb, var(--accent) 6%, transparent)",
+                    color: "color-mix(in srgb, var(--accent) 78%, transparent)",
+                  }}
                 >
-                  <span className="pointer-events-none absolute top-0 left-0 h-2 w-2 border-t border-l border-[#4A9EFF]/25 transition-all duration-300 group-hover:h-3 group-hover:w-3" />
-                  <span className="pointer-events-none absolute bottom-0 right-0 h-2 w-2 border-b border-r border-[#4A9EFF]/25 transition-all duration-300 group-hover:h-3 group-hover:w-3" />
+                  <span
+                    className="pointer-events-none absolute top-0 left-0 h-2 w-2 border-t border-l transition-all duration-300 group-hover:h-3 group-hover:w-3"
+                    style={{ borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)" }}
+                  />
+                  <span
+                    className="pointer-events-none absolute bottom-0 right-0 h-2 w-2 border-b border-r transition-all duration-300 group-hover:h-3 group-hover:w-3"
+                    style={{ borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)" }}
+                  />
                   {voting ? "Transmitting…" : "✓  Vote For"}
                 </button>
                 <button
                   onClick={() => handleVote(false)}
                   disabled={voting}
-                  className="mono flex-1 border border-[rgba(200,216,240,0.07)] bg-[rgba(15,22,40,0.42)] py-4 text-[11px] font-medium tracking-[0.2em] text-[#A8A090]/52 uppercase transition-all duration-300 hover:border-[rgba(200,216,240,0.14)] hover:bg-[rgba(15,22,40,0.62)] hover:text-[#A8A090]/78 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-25"
+                  className="mono flex-1 border py-4 text-[11px] font-medium tracking-[0.2em] uppercase transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-25"
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
+                    background: "color-mix(in srgb, var(--bg-secondary) 42%, transparent)",
+                    color: "color-mix(in srgb, var(--text-secondary) 52%, transparent)",
+                  }}
                 >
                   {voting ? "Transmitting…" : "✗  Vote Against"}
                 </button>
@@ -479,10 +625,12 @@ function ProposalDetail({ id }: { id: number }) {
           {proposal.status === "Closed" && (
             <div
               className="mt-8 py-5 text-center"
-              style={{ border: "1px solid rgba(200, 216, 240, 0.05)" }}
+              style={{ border: "1px solid color-mix(in srgb, var(--accent-secondary) 5%, transparent)" }}
             >
-              <span className="pointer-events-none absolute top-0 left-0 h-2 w-2 border-t border-l border-[rgba(200,216,240,0.06)]" />
-              <p className="mono text-[9px] tracking-[0.48em] text-[#A8A090]/22 uppercase">
+              <p
+                className="mono text-[9px] tracking-[0.48em] uppercase"
+                style={{ color: "color-mix(in srgb, var(--text-secondary) 22%, transparent)" }}
+              >
                 Voting Concluded
               </p>
             </div>
@@ -495,32 +643,58 @@ function ProposalDetail({ id }: { id: number }) {
         <div
           className="relative overflow-hidden p-7 sm:p-9"
           style={{
-            background: "linear-gradient(160deg, rgba(15, 22, 40, 0.84) 0%, rgba(6, 13, 26, 0.90) 100%)",
-            border: "1px solid rgba(200, 216, 240, 0.06)",
+            background: "linear-gradient(160deg, color-mix(in srgb, var(--bg-secondary) 84%, transparent) 0%, color-mix(in srgb, var(--bg-dark) 90%, transparent) 100%)",
+            border: "1px solid color-mix(in srgb, var(--accent-secondary) 6%, transparent)",
           }}
         >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(200,216,240,0.055)] to-transparent" />
-          <span className="pointer-events-none absolute top-0 left-0 h-4 w-4 border-t border-l border-[rgba(200,216,240,0.07)]" />
-          <span className="pointer-events-none absolute bottom-0 right-0 h-4 w-4 border-b border-r border-[rgba(200,216,240,0.07)]" />
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-px"
+            style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-secondary) 5.5%, transparent), transparent)" }}
+          />
+          <span
+            className="pointer-events-none absolute top-0 left-0 h-4 w-4 border-t border-l"
+            style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)" }}
+          />
+          <span
+            className="pointer-events-none absolute bottom-0 right-0 h-4 w-4 border-b border-r"
+            style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)" }}
+          />
 
           <div className="mb-7 flex items-center gap-3">
-            <p className="mono text-[9px] font-medium tracking-[0.38em] text-[#A8A090]/28 uppercase">
+            <p
+              className="mono text-[9px] font-medium tracking-[0.38em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
+            >
               // On-Chain Audit Trail
             </p>
-            <span className="h-px flex-1 bg-[rgba(200,216,240,0.04)]" />
-            <span className="mono text-[9px] tracking-[0.22em] text-[#A8A090]/16 uppercase">
+            <span
+              className="h-px flex-1"
+              style={{ background: "color-mix(in srgb, var(--accent-secondary) 4%, transparent)" }}
+            />
+            <span
+              className="mono text-[9px] tracking-[0.22em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 16%, transparent)" }}
+            >
               Immutable Records
             </span>
           </div>
 
           {voteLoading && (
-            <p className="mono text-[11px] tracking-[0.18em] text-[#A8A090]/28 uppercase">
+            <p
+              className="mono text-[11px] tracking-[0.18em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
+            >
               Retrieving records…
             </p>
           )}
 
           {voteError && !voteLoading && (
-            <p className="mono text-[12px] text-[#C8D8F0]/52">{voteError}</p>
+            <p
+              className="mono text-[12px]"
+              style={{ color: "color-mix(in srgb, var(--accent-secondary) 52%, transparent)" }}
+            >
+              {voteError}
+            </p>
           )}
 
           {voteData && !voteLoading && (
@@ -550,33 +724,55 @@ export default function ProposalDetailPage() {
   const id = Number(params.id);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0A0F1E] text-[#F5F0E8]">
+    <div className="flex min-h-screen flex-col" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       {/* Ambient atmospheric glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="animate-atmospheric absolute -top-60 left-1/2 h-[600px] w-[700px] -translate-x-1/2 rounded-full bg-[#4A9EFF]/[0.05] blur-[180px]" />
-        <div className="animate-atmospheric-slow absolute bottom-0 right-0 h-[400px] w-[500px] rounded-full bg-[#4A9EFF]/[0.028] blur-[150px]" />
+        <div
+          className="animate-atmospheric absolute -top-60 left-1/2 h-[600px] w-[700px] -translate-x-1/2 rounded-full blur-[180px]"
+          style={{ background: "color-mix(in srgb, var(--accent) 5%, transparent)" }}
+        />
+        <div
+          className="animate-atmospheric-slow absolute bottom-0 right-0 h-[400px] w-[500px] rounded-full blur-[150px]"
+          style={{ background: "color-mix(in srgb, var(--accent) 2.8%, transparent)" }}
+        />
       </div>
 
       <Navbar />
 
       {/* Cinematic page header */}
-      <div className="relative overflow-hidden border-b border-[rgba(200,216,240,0.05)]">
+      <div
+        className="relative overflow-hidden border-b"
+        style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 5%, transparent)" }}
+      >
         <div className="fine-grid pointer-events-none absolute inset-0 opacity-38" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/16 to-transparent" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#0A0F1E]" />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 16%, transparent), transparent)" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "linear-gradient(to bottom, transparent, var(--bg-primary))" }}
+        />
         {/* Atmospheric depth glow */}
-        <div className="pointer-events-none absolute right-1/4 top-0 h-[180px] w-[300px] rounded-full bg-[#4A9EFF]/[0.04] blur-[80px]" />
+        <div
+          className="pointer-events-none absolute right-1/4 top-0 h-[180px] w-[300px] rounded-full blur-[80px]"
+          style={{ background: "color-mix(in srgb, var(--accent) 4%, transparent)" }}
+        />
 
         <div className="relative mx-auto max-w-3xl px-8 pb-10 pt-12">
           <Link
             href="/proposals"
-            className="animate-fade-up mono mb-8 inline-flex items-center gap-2 text-[10px] tracking-[0.32em] text-[#A8A090]/28 uppercase transition-colors duration-300 hover:text-[#C8D8F0]/55"
+            className="animate-fade-up mono mb-8 inline-flex items-center gap-2 text-[10px] tracking-[0.32em] uppercase transition-colors duration-300"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
           >
             ← All Proposals
           </Link>
 
           <div className="animate-cinema-1">
-            <p className="mono text-[9px] tracking-[0.42em] text-[#4A9EFF]/32 uppercase">
+            <p
+              className="mono text-[9px] tracking-[0.42em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--accent) 32%, transparent)" }}
+            >
               // Proposal Detail
             </p>
           </div>
