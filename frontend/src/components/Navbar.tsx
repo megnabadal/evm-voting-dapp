@@ -10,12 +10,18 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false);
   }, []);
 
   return (
@@ -28,7 +34,7 @@ export default function Navbar() {
         background: "color-mix(in srgb, var(--bg-dark) 97%, transparent)",
       } : {}}
     >
-      {/* Blue accent thread — only visible when scrolled */}
+      {/* Blue accent thread */}
       <div
         className={`absolute inset-x-0 top-0 h-px transition-opacity duration-700 ${
           scrolled ? "opacity-100" : "opacity-0"
@@ -43,6 +49,7 @@ export default function Navbar() {
         <Link
           href="/"
           className="group flex items-center gap-2.5 transition-opacity duration-300 hover:opacity-65"
+          onClick={() => setMenuOpen(false)}
         >
           <span
             className="mono text-[13px] font-medium tracking-[0.30em] uppercase"
@@ -59,7 +66,7 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Center nav */}
+        {/* Center nav — desktop only */}
         <div className="hidden items-center gap-8 sm:flex">
           {[
             { href: "/proposals", label: "Proposals" },
@@ -80,13 +87,17 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Wallet area */}
+        {/* Right side */}
         <div className="flex items-center gap-3">
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="mono flex h-8 w-8 items-center justify-center border border-[var(--border-subtle)] text-[var(--text-secondary)] transition-all duration-300 hover:border-[#4A9EFF]/30 hover:text-[var(--accent)]"
+            className="mono flex h-8 w-8 items-center justify-center border transition-all duration-300"
+            style={{
+              borderColor: "var(--border-subtle)",
+              color: "var(--text-secondary)",
+            }}
           >
             {theme === "dark" ? (
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -107,84 +118,194 @@ export default function Navbar() {
             )}
           </button>
 
-          {!mounted ? (
-            <div
-              className="h-7 w-28 animate-pulse rounded-sm"
-              style={{ background: "color-mix(in srgb, var(--accent-secondary) 4%, transparent)" }}
-            />
-          ) : isConnected ? (
-            <div className="flex items-center gap-2.5">
-              {/* Network indicator */}
-              {network && (
+          {/* Wallet — desktop only */}
+          <div className="hidden sm:flex items-center gap-3">
+            {!mounted ? (
+              <div
+                className="h-7 w-28 animate-pulse rounded-sm"
+                style={{ background: "color-mix(in srgb, var(--accent-secondary) 4%, transparent)" }}
+              />
+            ) : isConnected ? (
+              <div className="flex items-center gap-2.5">
+                {network && (
+                  <div
+                    className={`hidden items-center gap-2 sm:inline-flex ${
+                      network.isSupported ? "text-emerald-400/65" : ""
+                    }`}
+                    style={!network.isSupported ? { color: "color-mix(in srgb, var(--accent) 65%, transparent)" } : {}}
+                  >
+                    <span className="relative flex h-1 w-1 rounded-full">
+                      <span
+                        className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-55 ${
+                          network.isSupported ? "bg-emerald-400" : ""
+                        }`}
+                        style={!network.isSupported ? { background: "var(--accent)" } : {}}
+                      />
+                      <span
+                        className={`relative inline-flex h-1 w-1 rounded-full ${
+                          network.isSupported ? "bg-emerald-400" : ""
+                        }`}
+                        style={!network.isSupported ? { background: "var(--accent)" } : {}}
+                      />
+                    </span>
+                    <span className="mono text-[9px] tracking-[0.22em] uppercase">
+                      {network.name}
+                    </span>
+                  </div>
+                )}
                 <div
-                  className={`hidden items-center gap-2 sm:inline-flex ${
-                    network.isSupported ? "text-emerald-400/65" : ""
-                  }`}
-                  style={!network.isSupported ? { color: "color-mix(in srgb, var(--accent) 65%, transparent)" } : {}}
+                  className="hidden items-center gap-2 border px-3 py-1.5 sm:inline-flex"
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
+                    background: "color-mix(in srgb, var(--bg-secondary) 55%, transparent)",
+                  }}
                 >
-                  <span className="relative flex h-1 w-1 rounded-full">
-                    <span
-                      className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-55 ${
-                        network.isSupported ? "bg-emerald-400" : ""
-                      }`}
-                      style={!network.isSupported ? { background: "var(--accent)" } : {}}
-                    />
-                    <span
-                      className={`relative inline-flex h-1 w-1 rounded-full ${
-                        network.isSupported ? "bg-emerald-400" : ""
-                      }`}
-                      style={!network.isSupported ? { background: "var(--accent)" } : {}}
-                    />
-                  </span>
-                  <span className="mono text-[9px] tracking-[0.22em] uppercase">
-                    {network.name}
+                  <span
+                    className="mono text-[10px]"
+                    style={{ color: "color-mix(in srgb, var(--text-secondary) 78%, transparent)" }}
+                  >
+                    {shortAddress}
                   </span>
                 </div>
-              )}
-
-              {/* Address pill */}
-              <div
-                className="hidden items-center gap-2 border px-3 py-1.5 sm:inline-flex"
-                style={{
-                  borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
-                  background: "color-mix(in srgb, var(--bg-secondary) 55%, transparent)",
-                }}
-              >
-                <span
-                  className="mono text-[10px]"
-                  style={{ color: "color-mix(in srgb, var(--text-secondary) 78%, transparent)" }}
+                <button
+                  onClick={disconnect}
+                  className="mono border bg-transparent px-3 py-1.5 text-[9px] tracking-[0.18em] uppercase transition-all duration-300"
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--accent-secondary) 5.5%, transparent)",
+                    color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)",
+                  }}
                 >
-                  {shortAddress}
-                </span>
+                  Disconnect
+                </button>
               </div>
-
-              {/* Disconnect */}
+            ) : (
               <button
-                onClick={disconnect}
-                className="mono border bg-transparent px-3 py-1.5 text-[9px] tracking-[0.18em] uppercase transition-all duration-300 hover:border-[#4A9EFF]/18 hover:text-[#4A9EFF]/55"
+                onClick={connect}
+                className="animate-glow-pulse mono border px-5 py-2 text-[10px] font-medium tracking-[0.20em] uppercase transition-all duration-300 active:scale-[0.97]"
                 style={{
-                  borderColor: "color-mix(in srgb, var(--accent-secondary) 5.5%, transparent)",
-                  color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)",
+                  borderColor: "color-mix(in srgb, var(--accent) 32%, transparent)",
+                  background: "color-mix(in srgb, var(--accent) 9%, transparent)",
+                  color: "var(--accent)",
                 }}
               >
-                Disconnect
+                Connect Wallet
               </button>
-            </div>
-          ) : (
-            <button
-              onClick={connect}
-              className="animate-glow-pulse mono border px-5 py-2 text-[10px] font-medium tracking-[0.20em] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/16 hover:border-[#4A9EFF]/52 active:scale-[0.97]"
+            )}
+          </div>
+
+          {/* Hamburger — mobile only */}
+          <button
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="Toggle menu"
+            className="mono flex h-8 w-8 flex-col items-center justify-center gap-[5px] border transition-all duration-300 sm:hidden"
+            style={{
+              borderColor: "var(--border-subtle)",
+            }}
+          >
+            <span
+              className="block h-px w-4 transition-all duration-300"
               style={{
-                borderColor: "color-mix(in srgb, var(--accent) 32%, transparent)",
-                background: "color-mix(in srgb, var(--accent) 9%, transparent)",
-                color: "var(--accent)",
+                background: "var(--text-secondary)",
+                transform: menuOpen ? "translateY(6px) rotate(45deg)" : "none",
               }}
-            >
-              Connect Wallet
-            </button>
-          )}
+            />
+            <span
+              className="block h-px w-4 transition-all duration-300"
+              style={{
+                background: "var(--text-secondary)",
+                opacity: menuOpen ? 0 : 1,
+              }}
+            />
+            <span
+              className="block h-px w-4 transition-all duration-300"
+              style={{
+                background: "var(--text-secondary)",
+                transform: menuOpen ? "translateY(-6px) rotate(-45deg)" : "none",
+              }}
+            />
+          </button>
         </div>
       </nav>
+
+      {/* Mobile menu dropdown */}
+      <div
+        className="overflow-hidden transition-all duration-300 sm:hidden"
+        style={{
+          maxHeight: menuOpen ? "400px" : "0px",
+          borderTop: menuOpen ? "1px solid var(--border-subtle)" : "1px solid transparent",
+          background: "color-mix(in srgb, var(--bg-dark) 97%, transparent)",
+          backdropFilter: "blur(24px)",
+        }}
+      >
+        <div className="flex flex-col gap-0 px-8 py-6">
+          {/* Nav links */}
+          {[
+            { href: "/proposals", label: "Proposals" },
+            { href: "/proposals/create", label: "Create" },
+          ].map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setMenuOpen(false)}
+              className="mono border-b py-4 text-[10px] tracking-[0.28em] uppercase transition-colors duration-300"
+              style={{
+                borderColor: "var(--border-subtle)",
+                color: "color-mix(in srgb, var(--text-secondary) 60%, transparent)",
+              }}
+            >
+              {label}
+            </Link>
+          ))}
+
+          {/* Wallet section */}
+          <div className="pt-5">
+            {!mounted ? null : isConnected ? (
+              <div className="flex flex-col gap-3">
+                {network && (
+                  <div
+                    className="mono text-[9px] tracking-[0.22em] uppercase"
+                    style={{
+                      color: network.isSupported
+                        ? "rgba(52, 211, 153, 0.65)"
+                        : "color-mix(in srgb, var(--accent) 65%, transparent)",
+                    }}
+                  >
+                    ● {network.name}
+                  </div>
+                )}
+                <div
+                  className="mono text-[10px]"
+                  style={{ color: "color-mix(in srgb, var(--text-secondary) 70%, transparent)" }}
+                >
+                  {shortAddress}
+                </div>
+                <button
+                  onClick={() => { disconnect(); setMenuOpen(false); }}
+                  className="mono border w-full py-2.5 text-[9px] tracking-[0.18em] uppercase transition-all duration-300"
+                  style={{
+                    borderColor: "var(--border-subtle)",
+                    color: "color-mix(in srgb, var(--text-secondary) 50%, transparent)",
+                  }}
+                >
+                  Disconnect
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => { connect(); setMenuOpen(false); }}
+                className="mono w-full border py-3 text-[10px] font-medium tracking-[0.20em] uppercase transition-all duration-300"
+                style={{
+                  borderColor: "color-mix(in srgb, var(--accent) 32%, transparent)",
+                  background: "color-mix(in srgb, var(--accent) 9%, transparent)",
+                  color: "var(--accent)",
+                }}
+              >
+                Connect Wallet
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </header>
   );
 }
