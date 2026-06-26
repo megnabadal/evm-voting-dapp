@@ -134,7 +134,6 @@ export default function HomePage() {
     return () => observers.forEach((o) => o.disconnect());
   }, []);
 
-  // Delay 500ms to allow dynamic imports to fully mount before observing
   useEffect(() => {
     const timer = setTimeout(() => {
       const els = document.querySelectorAll<HTMLElement>(".reveal, .reveal-left");
@@ -237,7 +236,7 @@ export default function HomePage() {
               style={{
                 fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
                 fontWeight: 900,
-                fontSize: "clamp(5.5rem, 18vw, 15rem)",
+                fontSize: "clamp(3rem, 15vw, 15rem)",
                 animation: "fade-up 0.9s ease-out 0s both",
                 color: "var(--text-primary)",
               }}
@@ -253,7 +252,7 @@ export default function HomePage() {
                 fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
                 fontWeight: 400,
                 fontStyle: "italic",
-                fontSize: "clamp(5.5rem, 18vw, 15rem)",
+                fontSize: "clamp(3rem, 15vw, 15rem)",
                 background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 55%, var(--accent) 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
