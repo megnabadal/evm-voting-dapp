@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { errorHandler } from "./middleware/errorHandler";
 import proposalRoutes from "./routes/proposalRoutes";
+import userRoutes from "./routes/userRoutes";
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/proposals", proposalRoutes);
+app.use("/api/users", userRoutes);
 
 app.use(errorHandler);
 
