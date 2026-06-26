@@ -5,6 +5,7 @@ import { injected } from "wagmi/connectors";
 import { sepolia } from "wagmi/chains";
 import { useState, useEffect } from "react";
 import type { NetworkInfo } from "../types";
+import { useWalletUI } from "../context/WalletUIContext";
 
 export function useWallet() {
   const { address, isConnected, chain } = useAccount();
@@ -12,7 +13,7 @@ export function useWallet() {
   const { disconnect: wagmiDisconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
   const [error, setError] = useState<string | null>(null);
-  const [showMetaMaskWarning, setShowMetaMaskWarning] = useState(false);
+  const { showMetaMaskWarning, setShowMetaMaskWarning } = useWalletUI();
 
   const isMetaMaskInstalled =
     typeof window !== "undefined" && !!window.ethereum;
