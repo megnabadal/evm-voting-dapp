@@ -16,9 +16,10 @@ export function useWallet() {
   const { showMetaMaskWarning, setShowMetaMaskWarning } = useWalletUI();
 
   const isMetaMaskInstalled =
-    typeof window !== "undefined" &&
-    !!window.ethereum &&
-    window.ethereum.isMetaMask === true;
+  typeof window !== "undefined" &&
+  !!window.ethereum &&
+  window.ethereum.isMetaMask === true &&
+  !window.ethereum.isBraveWallet;
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.ethereum) return;
