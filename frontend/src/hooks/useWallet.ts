@@ -16,7 +16,9 @@ export function useWallet() {
   const { showMetaMaskWarning, setShowMetaMaskWarning } = useWalletUI();
 
   const isMetaMaskInstalled =
-    typeof window !== "undefined" && !!window.ethereum;
+    typeof window !== "undefined" &&
+    !!window.ethereum &&
+    window.ethereum.isMetaMask === true;
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.ethereum) return;
