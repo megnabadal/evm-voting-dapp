@@ -22,7 +22,7 @@ function calculateAge(dob: string): number {
 
 export async function getUser(req: Request, res: Response, next: NextFunction) {
   try {
-    const { walletAddress } = req.params;
+    const walletAddress = req.params.walletAddress as string;
     if (!isValidEthAddress(walletAddress)) {
       return res.status(400).json({ error: "Invalid wallet address" });
     }

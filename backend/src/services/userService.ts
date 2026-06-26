@@ -1,5 +1,4 @@
-import pool from "../db";
-
+import pool from "../config/db";
 export interface User {
   wallet_address: string;
   full_name: string;
