@@ -22,7 +22,7 @@ export async function registerUser(data: {
   username: string;
   email: string;
   dateOfBirth: string;
-}): Promise<User> {
+}): Promise<User & { treasuryTx?: { txHash: string; amount: string } | null }> {
   const res = await fetch(`${API_BASE}/users`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -33,4 +33,11 @@ export async function registerUser(data: {
     throw new Error(err.error || "Registration failed");
   }
   return res.json();
+}
+
+export async function getBalance(walletAddress: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/users/${walletAddress}/balance`);
+  if (!res.ok) throw new Error("Failed to fetch balance");
+  const data = await res.json();
+  return data.balance;
 }
