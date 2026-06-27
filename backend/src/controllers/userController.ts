@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { getUserByWallet, createUser, isUsernameTaken } from "../services/userService";
+import { sendInitialFunds, getWalletBalance } from "../services/treasuryService";
 
 function isValidEthAddress(address: string): boolean {
   return /^0x[a-fA-F0-9]{40}$/.test(address);
@@ -31,6 +32,19 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
       return res.status(404).json({ error: "User not found" });
     }
     return res.json(user);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getBalance(req: Request, res: Response, next: NextFunction) {
+  try {
+    const walletAddress = req.params.walletAddress as string;
+    if (!isValidEthAddress(walletAddress)) {
+      return res.status(400).json({ error: "Invalid wallet address" });
+    }
+    const balance = await getWalletBalance(walletAddress);
+    return res.json({ balance });
   } catch (err) {
     next(err);
   }
@@ -71,7 +85,16 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
     }
 
     const user = await createUser({ walletAddress, fullName, username, email, dateOfBirth });
-    return res.status(201).json(user);
+
+    // Send initial Sepolia ETH from treasury (don't fail registration if this fails)
+    let treasuryTx: { txHash: string; amount: string } | null = null;
+    try {
+      treasuryTx = await sendInitialFunds(walletAddress);
+    } catch (err) {
+      console.error("Failed to send initial funds:", err);
+    }
+
+    return res.status(201).json({ ...user, treasuryTx });
   } catch (err) {
     next(err);
   }
