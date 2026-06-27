@@ -95,7 +95,7 @@ export default function LowBalanceWarning() {
           You need more Sepolia ETH to vote or create proposals. Get free test ETH from a faucet.
         </p>
 
-        
+        <a
           href={FAUCET_URL}
           target="_blank"
           rel="noopener noreferrer"
