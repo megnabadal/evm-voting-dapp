@@ -27,7 +27,7 @@ export default function CustomCursor() {
       aria-hidden="true"
     >
       <div
-        className="h-3 w-3 rounded-full"
+        className="h-2 w-2 rounded-full"
         style={{
           background: "var(--accent)",
           boxShadow: "0 0 10px color-mix(in srgb, var(--accent) 90%, transparent)",
