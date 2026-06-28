@@ -157,7 +157,7 @@ export default function Navbar() {
                   className="hidden items-center gap-2 border px-3 py-1.5 sm:inline-flex"
                   style={{
                     borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
-                    background: "color-mix(in srgb, var(--bg-secondary) 55%, transparent)",
+                    background: "color-mix(in srgb, var(--accent) 55%, transparent)",
                   }}
                 >
                   <span
@@ -169,10 +169,10 @@ export default function Navbar() {
                 </div>
                 <button
                   onClick={disconnect}
-                  className="mono border bg-transparent px-3 py-1.5 text-[9px] tracking-[0.18em] uppercase transition-all duration-300"
+                  className="mono border bg-transparent px-3 py-1.5 text-[9px] tracking-[0.18em] uppercase transition-all duration-300 hover:bg-[rgba(220,38,38,0.12)]"
                   style={{
-                    borderColor: "color-mix(in srgb, var(--accent-secondary) 5.5%, transparent)",
-                    color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)",
+                    borderColor: "rgba(220, 38, 38, 0.4)",
+                    color: "rgba(248, 113, 113, 0.85)",
                   }}
                 >
                   Disconnect
@@ -283,8 +283,8 @@ export default function Navbar() {
                   onClick={() => { disconnect(); setMenuOpen(false); }}
                   className="mono border w-full py-2.5 text-[9px] tracking-[0.18em] uppercase transition-all duration-300"
                   style={{
-                    borderColor: "var(--border-subtle)",
-                    color: "color-mix(in srgb, var(--text-secondary) 50%, transparent)",
+                    borderColor: "rgba(220, 38, 38, 0.4)",
+                    color: "rgba(248, 113, 113, 0.85)",
                   }}
                 >
                   Disconnect
