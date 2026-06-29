@@ -116,4 +116,5 @@ This is deliberate. Standard PRs between branches fail because they share no his
 Built as part of a 30-day software development internship under mentor guidance. Educational project, not intended for production use without additional security review.
 
 Mentor — review and architectural decisions
+
 [Megna Badal](https://github.com/megnabadal) — development
