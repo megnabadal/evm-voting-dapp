@@ -10,6 +10,7 @@ import { useProposalStore } from "../../store/useProposalStore";
 import { getProposalVotes, type VoteTransaction } from "../../lib/api";
 
 interface ActivityItem extends VoteTransaction {
+  proposalId: number;
   proposalTitle: string;
 }
 
@@ -34,13 +35,18 @@ function ActivityList() {
     Promise.all(
       proposals.map(async (p) => {
         const votes = await getProposalVotes(p.id);
-        return votes.map((v) => ({ ...v, proposalTitle: p.title }));
+        return votes.map((v) => ({
+          ...v,
+          proposalId: p.id,
+          proposalTitle: p.title,
+        }));
       })
     )
       .then((results) => {
         if (cancelled) return;
         const all = results.flat();
-        all.sort((a, b) => new Date(b.voted_at).getTime() - new Date(a.voted_at).getTime());
+        // Sort by blockNumber descending (newest blocks first)
+        all.sort((a, b) => b.blockNumber - a.blockNumber);
         setActivity(all);
         setLoading(false);
       })
@@ -104,18 +110,12 @@ function ActivityList() {
     <>
       <div className="space-y-2">
         {paginated.map((item, i) => {
-          const isYes = item.vote_yes ?? item.support ?? false;
-          const shortVoter = `${item.voter_address.slice(0, 6)}...${item.voter_address.slice(-4)}`;
-          const time = new Date(item.voted_at).toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+          const isYes = item.support;
+          const shortVoter = `${item.voter.slice(0, 6)}...${item.voter.slice(-4)}`;
 
           return (
             <div
-              key={`${item.tx_hash}-${i}`}
+              key={`${item.txHash}-${i}`}
               className="relative flex items-center justify-between gap-4 border p-4 transition-all duration-300 hover:border-[#4A9EFF]/20"
               style={{
                 borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
@@ -143,7 +143,7 @@ function ActivityList() {
 
                 <div className="flex flex-col gap-0.5">
                   <Link
-                    href={`/proposals/${item.proposal_id}`}
+                    href={`/proposals/${item.proposalId}`}
                     className="text-[14px] font-semibold transition-colors hover:text-[#4A9EFF]"
                     style={{
                       fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
@@ -154,7 +154,7 @@ function ActivityList() {
                   </Link>
                   <div className="mono flex items-center gap-2 text-[9px] tracking-[0.15em] uppercase">
                     <span style={{ color: "color-mix(in srgb, var(--accent) 60%, transparent)" }}>
-                      OP-{String(item.proposal_id).padStart(3, "0")}
+                      OP-{String(item.proposalId).padStart(3, "0")}
                     </span>
                     <span style={{ color: "color-mix(in srgb, var(--text-secondary) 30%, transparent)" }}>
                       ·
@@ -168,7 +168,7 @@ function ActivityList() {
 
               <div className="flex items-center gap-4">
                 <a
-                  href={`https://sepolia.etherscan.io/tx/${item.tx_hash}`}
+                  href={`https://sepolia.etherscan.io/tx/${item.txHash}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mono text-[9px] tracking-[0.18em] uppercase transition-colors hover:text-[#4A9EFF]"
@@ -181,7 +181,7 @@ function ActivityList() {
                   className="mono text-[9px] tracking-[0.15em] uppercase whitespace-nowrap"
                   style={{ color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)" }}
                 >
-                  {time}
+                  Block {item.blockNumber.toLocaleString()}
                 </span>
               </div>
             </div>

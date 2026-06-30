@@ -42,17 +42,27 @@ export async function getBalance(walletAddress: string): Promise<string> {
   return data.balance;
 }
 export interface VoteTransaction {
-  tx_hash: string;
-  proposal_id: number;
-  voter_address: string;
-  vote_yes?: boolean;
-  support?: boolean;
-  block_number: number;
-  voted_at: string;
+  txHash: string;
+  voter: string;
+  support: boolean;
+  blockNumber: number;
+}
+
+interface VotesResponse {
+  success: boolean;
+  data: {
+    proposalId: number;
+    proposalTitle: string;
+    totals: { yes: number; no: number };
+    yesVotes: VoteTransaction[];
+    noVotes: VoteTransaction[];
+  };
 }
 
 export async function getProposalVotes(proposalId: number): Promise<VoteTransaction[]> {
   const res = await fetch(`${API_BASE}/proposals/${proposalId}/votes`);
   if (!res.ok) return [];
-  return res.json();
+  const json: VotesResponse = await res.json();
+  if (!json.success || !json.data) return [];
+  return [...json.data.yesVotes, ...json.data.noVotes];
 }
