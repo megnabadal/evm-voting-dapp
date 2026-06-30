@@ -9,6 +9,8 @@ import Loading from "../../components/Loading";
 import Toast from "../../components/Toast";
 import WalletGuard from "../../components/WalletGuard";
 import SortDropdown, { type SortOption } from "../../components/SortDropdown";
+import FilterTabs, { type FilterOption } from "../../components/FilterTabs";
+import SearchInput from "../../components/SearchInput";
 import { castVote } from "../../services/blockchainService";
 import { formatVoteError } from "../../utils/proposal";
 import { useProposalStore } from "../../store/useProposalStore";
@@ -37,9 +39,27 @@ function ProposalsList() {
   const hasFetched = useRef(false);
 
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [filter, setFilter] = useState<FilterOption>("all");
+  const [search, setSearch] = useState("");
 
-  const sortedProposals = useMemo(() => {
-    const arr = [...proposals];
+  const filteredAndSorted = useMemo(() => {
+    let arr = [...proposals];
+
+    // Filter by status
+    if (filter === "active") arr = arr.filter((p) => p.status === "Active");
+    else if (filter === "closed") arr = arr.filter((p) => p.status !== "Active");
+
+    // Filter by search query
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      arr = arr.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
     switch (sortBy) {
       case "newest":
         return arr.sort((a, b) => b.deadline - a.deadline);
@@ -50,11 +70,10 @@ function ProposalsList() {
       case "least-votes":
         return arr.sort((a, b) => a.totalVotes - b.totalVotes);
     }
-  }, [proposals, sortBy]);
+  }, [proposals, sortBy, filter, search]);
 
   useEffect(() => {
     const now = Date.now();
-    // Only fetch if no cache or cache expired
     if (!hasFetched.current || now - lastFetchTime > CACHE_TTL) {
       hasFetched.current = true;
       lastFetchTime = now;
@@ -82,7 +101,6 @@ function ProposalsList() {
       );
 
       showToast("Vote submitted successfully!", "success");
-      // Invalidate cache and refetch
       lastFetchTime = 0;
       await fetchProposals();
     } catch (err) {
@@ -103,9 +121,21 @@ function ProposalsList() {
         </div>
       )}
 
-      {/* Sort dropdown */}
+      {/* Search + Filter + Sort row */}
       {!loading && proposals.length > 0 && (
-        <div className="mb-4 flex items-center justify-end">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <FilterTabs
+              value={filter}
+              onChange={setFilter}
+              counts={{
+                all: proposals.length,
+                active: activeCount,
+                closed: closedCount,
+              }}
+            />
+            <SearchInput value={search} onChange={setSearch} />
+          </div>
           <SortDropdown value={sortBy} onChange={setSortBy} />
         </div>
       )}
@@ -182,7 +212,7 @@ function ProposalsList() {
       {/* Proposals with lazy loaded cards */}
       {!loading && proposals.length > 0 && (
         <div className="space-y-3">
-          {sortedProposals.map((proposal, i) => (
+          {filteredAndSorted.map((proposal, i) => (
             <ScrollReveal key={proposal.id} delay={i * 60}>
               <ProposalCard
                 id={proposal.id}
@@ -199,6 +229,17 @@ function ProposalsList() {
               
             </ScrollReveal>
           ))}
+        </div>
+      )}
+
+      {/* Empty state for filtered/searched results */}
+      {!loading && proposals.length > 0 && filteredAndSorted.length === 0 && (
+        <div className="mt-8 py-16 text-center">
+          <p className="mono text-[10px] tracking-[0.25em] text-[#A8A090]/40 uppercase">
+            {search.trim()
+              ? `No proposals match "${search.trim()}"`
+              : `No ${filter} proposals`}
+          </p>
         </div>
       )}
     </>
