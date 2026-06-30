@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import Navbar from "../../components/Navbar";
@@ -8,6 +8,7 @@ import Footer from "../../components/Footer";
 import Loading from "../../components/Loading";
 import Toast from "../../components/Toast";
 import WalletGuard from "../../components/WalletGuard";
+import SortDropdown, { type SortOption } from "../../components/SortDropdown";
 import { castVote } from "../../services/blockchainService";
 import { formatVoteError } from "../../utils/proposal";
 import { useProposalStore } from "../../store/useProposalStore";
@@ -34,6 +35,22 @@ function ProposalsList() {
     useProposalStore();
   const { toast, showToast, clearToast } = useUIStore();
   const hasFetched = useRef(false);
+
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+
+  const sortedProposals = useMemo(() => {
+    const arr = [...proposals];
+    switch (sortBy) {
+      case "newest":
+        return arr.sort((a, b) => b.deadline - a.deadline);
+      case "oldest":
+        return arr.sort((a, b) => a.deadline - b.deadline);
+      case "most-votes":
+        return arr.sort((a, b) => b.totalVotes - a.totalVotes);
+      case "least-votes":
+        return arr.sort((a, b) => a.totalVotes - b.totalVotes);
+    }
+  }, [proposals, sortBy]);
 
   useEffect(() => {
     const now = Date.now();
@@ -83,6 +100,13 @@ function ProposalsList() {
       {toast && (
         <div className="mb-6 animate-slide-up">
           <Toast message={toast.message} type={toast.type} onClose={clearToast} />
+        </div>
+      )}
+
+      {/* Sort dropdown */}
+      {!loading && proposals.length > 0 && (
+        <div className="mb-4 flex items-center justify-end">
+          <SortDropdown value={sortBy} onChange={setSortBy} />
         </div>
       )}
 
@@ -158,7 +182,7 @@ function ProposalsList() {
       {/* Proposals with lazy loaded cards */}
       {!loading && proposals.length > 0 && (
         <div className="space-y-3">
-          {proposals.map((proposal, i) => (
+          {sortedProposals.map((proposal, i) => (
             <ScrollReveal key={proposal.id} delay={i * 60}>
               <ProposalCard
                 id={proposal.id}
