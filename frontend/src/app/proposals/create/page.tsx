@@ -10,6 +10,8 @@ import Toast from "../../../components/Toast";
 import { createProposal } from "../../../services/blockchainService";
 import { saveProposalToDB } from "../../../services/apiService";
 import { useWallet } from "../../../hooks/useWallet";
+import type { ProposalCategory } from "../../../types";
+import { PROPOSAL_CATEGORIES } from "../../../types";
 
 function CreateForm() {
   const router = useRouter();
@@ -17,6 +19,9 @@ function CreateForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [duration, setDuration] = useState("1440");
+  // UI-ONLY: category is held in local state but NOT sent to createProposal()
+  // or saveProposalToDB(). It is not persisted anywhere.
+  const [category, setCategory] = useState<ProposalCategory>("Governance");
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<"idle" | "blockchain" | "saving" | "done">("idle");
   const [toast, setToast] = useState<{
@@ -194,6 +199,42 @@ function CreateForm() {
               }
             >
               {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Category — UI ONLY, not yet persisted to backend or contract */}
+      <div>
+        <label
+          className="mono mb-3 block text-[9px] tracking-[0.28em] uppercase"
+          style={{ color: "color-mix(in srgb, var(--accent) 55%, transparent)" }}
+        >
+          // Directive Category
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {PROPOSAL_CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setCategory(cat)}
+              className="mono border px-4 py-2 text-[11px] font-medium tracking-[0.15em] uppercase transition-all duration-200"
+              style={
+                category === cat
+                  ? {
+                      borderColor: "color-mix(in srgb, var(--accent) 45%, transparent)",
+                      background: "color-mix(in srgb, var(--accent) 12%, transparent)",
+                      color: "var(--accent)",
+                      boxShadow: "0 0 12px color-mix(in srgb, var(--accent) 12%, transparent)",
+                    }
+                  : {
+                      borderColor: "var(--border-subtle)",
+                      background: "color-mix(in srgb, var(--bg-secondary) 40%, transparent)",
+                      color: "color-mix(in srgb, var(--text-secondary) 45%, transparent)",
+                    }
+              }
+            >
+              {cat}
             </button>
           ))}
         </div>
