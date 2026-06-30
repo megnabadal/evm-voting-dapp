@@ -312,16 +312,22 @@ export default function ProposalsPage() {
               </p>
             </div>
 
-            <div className="animate-cinema-3 shrink-0">
-              <Link
-                href="/proposals/create"
-                className="blue-glow-btn relative inline-flex items-center border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-6 py-3 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/20 hover:border-[#4A9EFF]/60 hover:scale-[1.02] active:scale-[0.97]"
-              >
-                <span className="pointer-events-none absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-[#4A9EFF]/35" />
-                <span className="pointer-events-none absolute bottom-0 right-0 h-1.5 w-1.5 border-b border-r border-[#4A9EFF]/35" />
-                + Create
-              </Link>
-            </div>
+            <div className="animate-cinema-3 flex shrink-0 items-center gap-3">
+            <Link
+            href="/proposals/archive"
+            className="mono relative inline-flex items-center border border-[#4A9EFF]/25 bg-transparent px-5 py-3 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF]/70 uppercase transition-all duration-300 hover:bg-[#4A9EFF]/8 hover:border-[#4A9EFF]/45"
+            >
+            Archive
+            </Link>
+            <Link
+            href="/proposals/create"
+            className="blue-glow-btn relative inline-flex items-center border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-6 py-3 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/20 hover:border-[#4A9EFF]/60 hover:scale-[1.02] active:scale-[0.97]"
+            >
+            <span className="pointer-events-none absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-[#4A9EFF]/35" />
+            <span className="pointer-events-none absolute bottom-0 right-0 h-1.5 w-1.5 border-b border-r border-[#4A9EFF]/35" />
+          + Create
+          </Link>
+          </div>  
           </div>
         </div>
       </div>
