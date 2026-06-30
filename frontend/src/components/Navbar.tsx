@@ -24,6 +24,12 @@ export default function Navbar() {
     setMenuOpen(false);
   }, []);
 
+  const navLinks = [
+    { href: "/proposals", label: "Proposals" },
+    { href: "/proposals/create", label: "Create" },
+    { href: "/profile", label: "Profile" },
+  ];
+
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-700 ${
@@ -68,10 +74,7 @@ export default function Navbar() {
 
         {/* Center nav — desktop only */}
         <div className="hidden items-center gap-8 sm:flex">
-          {[
-            { href: "/proposals", label: "Proposals" },
-            { href: "/proposals/create", label: "Create" },
-          ].map(({ href, label }) => (
+          {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
@@ -239,10 +242,7 @@ export default function Navbar() {
       >
         <div className="flex flex-col gap-0 px-8 py-6">
           {/* Nav links */}
-          {[
-            { href: "/proposals", label: "Proposals" },
-            { href: "/proposals/create", label: "Create" },
-          ].map(({ href, label }) => (
+          {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
