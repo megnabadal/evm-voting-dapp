@@ -11,6 +11,7 @@ import WalletGuard from "../../components/WalletGuard";
 import SortDropdown, { type SortOption } from "../../components/SortDropdown";
 import FilterTabs, { type FilterOption } from "../../components/FilterTabs";
 import SearchInput from "../../components/SearchInput";
+import Pagination from "../../components/Pagination";
 import { castVote } from "../../services/blockchainService";
 import { formatVoteError } from "../../utils/proposal";
 import { useProposalStore } from "../../store/useProposalStore";
@@ -30,6 +31,7 @@ const ScrollReveal = dynamic(() => import("../../components/ScrollReveal"), {
 
 // Cache duration — 30 seconds
 const CACHE_TTL = 30_000;
+const PROPOSALS_PER_PAGE = 5;
 let lastFetchTime = 0;
 
 function ProposalsList() {
@@ -41,6 +43,7 @@ function ProposalsList() {
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [filter, setFilter] = useState<FilterOption>("all");
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredAndSorted = useMemo(() => {
     let arr = [...proposals];
@@ -71,6 +74,18 @@ function ProposalsList() {
         return arr.sort((a, b) => a.totalVotes - b.totalVotes);
     }
   }, [proposals, sortBy, filter, search]);
+
+  const totalPages = Math.ceil(filteredAndSorted.length / PROPOSALS_PER_PAGE);
+
+  const paginatedProposals = useMemo(() => {
+    const start = (currentPage - 1) * PROPOSALS_PER_PAGE;
+    return filteredAndSorted.slice(start, start + PROPOSALS_PER_PAGE);
+  }, [filteredAndSorted, currentPage]);
+
+  // Reset to page 1 when filters/search/sort change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, search, sortBy]);
 
   useEffect(() => {
     const now = Date.now();
@@ -212,7 +227,7 @@ function ProposalsList() {
       {/* Proposals with lazy loaded cards */}
       {!loading && proposals.length > 0 && (
         <div className="space-y-3">
-          {filteredAndSorted.map((proposal, i) => (
+          {paginatedProposals.map((proposal, i) => (
             <ScrollReveal key={proposal.id} delay={i * 60}>
               <ProposalCard
                 id={proposal.id}
@@ -230,6 +245,15 @@ function ProposalsList() {
             </ScrollReveal>
           ))}
         </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && proposals.length > 0 && totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       )}
 
       {/* Empty state for filtered/searched results */}
