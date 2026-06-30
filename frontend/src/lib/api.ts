@@ -41,3 +41,18 @@ export async function getBalance(walletAddress: string): Promise<string> {
   const data = await res.json();
   return data.balance;
 }
+export interface VoteTransaction {
+  tx_hash: string;
+  proposal_id: number;
+  voter_address: string;
+  vote_yes?: boolean;
+  support?: boolean;
+  block_number: number;
+  voted_at: string;
+}
+
+export async function getProposalVotes(proposalId: number): Promise<VoteTransaction[]> {
+  const res = await fetch(`${API_BASE}/proposals/${proposalId}/votes`);
+  if (!res.ok) return [];
+  return res.json();
+}
