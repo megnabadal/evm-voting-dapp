@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { ProposalStatus } from "../types";
+import CountdownTimer from "./CountdownTimer";
 
 interface ProposalCardProps {
   id?: number;
@@ -10,6 +11,7 @@ interface ProposalCardProps {
   status: ProposalStatus;
   yesPercent: number;
   totalVotes?: number;
+  deadline?: number;
   onVote?: (id: number, voteYes: boolean) => Promise<void>;
   isVoting?: boolean;
 }
@@ -46,6 +48,7 @@ export default function ProposalCard({
   status,
   yesPercent,
   totalVotes,
+  deadline,
   onVote,
   isVoting = false,
 }: ProposalCardProps) {
@@ -228,15 +231,22 @@ export default function ProposalCard({
           </div>
         </div>
 
-        {/* Vote count */}
-        {totalVotes !== undefined && (
-          <p
-            className="mono mb-5 text-[9px] tracking-[0.2em] uppercase"
-            style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
-          >
-            {totalVotes.toLocaleString()} votes recorded
-          </p>
-        )}
+        {/* Vote count + Countdown */}
+        <div className="mb-5 flex items-center justify-between">
+          {totalVotes !== undefined ? (
+            <p
+              className="mono text-[9px] tracking-[0.2em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 28%, transparent)" }}
+            >
+              {totalVotes.toLocaleString()} votes recorded
+            </p>
+          ) : (
+            <span />
+          )}
+          {deadline !== undefined && (
+            <CountdownTimer deadline={deadline} isClosed={status === "Closed"} />
+          )}
+        </div>
 
         {/* Vote buttons */}
         {canVote && (
