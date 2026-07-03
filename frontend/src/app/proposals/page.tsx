@@ -96,32 +96,50 @@ function ProposalsList() {
     }
   }, [fetchProposals]);
 
-  const handleVote = async (proposalId: number, voteYes: boolean) => {
-    setVotingId(proposalId);
-    try {
-      const result = await castVote(proposalId,voteYes);
-        await fetch(`https://evm-voting-dapp-production.up.railway.app/api/proposals/${proposalId}/votes`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            txHash: result.txHash,
-            voterAddress: result.voterAddress,
-            support: voteYes,
-            blockNumber: result.receipt.blockNumber,
-          }),
-        }
-      );
+ const handleVote = async (proposalId: number, voteYes: boolean) => {
+  setVotingId(proposalId);
 
-      showToast("Vote submitted successfully!", "success");
-      lastFetchTime = 0;
-      await fetchProposals();
-    } catch (err) {
-      showToast(formatVoteError(err), "error");
-    } finally {
-      setVotingId(null);
+  try {
+    const result = await castVote(proposalId, voteYes);
+
+    console.log("Vote result:", result);
+
+    const response = await fetch(
+      `https://evm-voting-dapp-production.up.railway.app/api/proposals/${proposalId}/votes`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          txHash: result.txHash,
+          voterAddress: result.voterAddress,
+          support: voteYes,
+          blockNumber: result.receipt.blockNumber,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    console.log("POST status:", response.status);
+    console.log("POST response:", data);
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to save vote");
     }
-  };
+
+    showToast("Vote submitted successfully!", "success");
+
+    lastFetchTime = 0;
+    await fetchProposals();
+  } catch (err) {
+    console.error("Vote error:", err);
+    showToast(formatVoteError(err), "error");
+  } finally {
+    setVotingId(null);
+  }
+};
 
   const activeCount = proposals.filter((p) => p.status === "Active").length;
   const closedCount = proposals.length - activeCount;
