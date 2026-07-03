@@ -292,18 +292,19 @@ function ProposalDetail({ id }: { id: number }) {
     setVoting(true);
     setToast(null);
     try {
-      const receipt = await castVote(id, voteYes);
+      const result = await castVote(id, voteYes);
 
-      await fetch(
-        `${"https://evm-voting-dapp-production.up.railway.app"}/api/proposals/${id}/votes`,
+        await fetch(`https://evm-voting-dapp-production.up.railway.app/api/proposals/${id}/votes`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            txHash: receipt.hash,
-            voterAddress: receipt.from,
-            support: voteYes,
-            blockNumber: receipt.blockNumber,
+          txHash: result.txHash,
+          voterAddress: result.voterAddress,
+          support: voteYes,
+          blockNumber: result.receipt.blockNumber,
           }),
         }
       );

@@ -9,7 +9,10 @@
       "Bash(npx tsc *)",
       "Bash(npx next *)",
       "Bash(echo \"TSC_EXIT:$?\")",
-      "Bash(echo \"BUILD_EXIT:$?\")"
+      "Bash(echo \"BUILD_EXIT:$?\")",
+      "Bash(node -e ' *)",
+      "Bash(npx hardhat *)",
+      "Bash(git mv *)"
     ]
   }
 }

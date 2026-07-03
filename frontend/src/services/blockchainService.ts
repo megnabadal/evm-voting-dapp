@@ -68,11 +68,25 @@ export const createProposal = async (
 export const castVote = async (
   proposalId: number,
   voteYes: boolean
-): Promise<ethers.TransactionReceipt> => {
+): Promise<{
+  receipt: ethers.TransactionReceipt;
+  txHash: string;
+  voterAddress: string;
+}> => {
   const contract = await getContractWithSigner();
+
   const tx = await contract.vote(proposalId, voteYes);
   console.log("Transaction pending:", tx.hash);
+
   const receipt = await tx.wait();
   console.log("Transaction confirmed:", receipt);
-  return receipt;
+
+  const signer = await getSigner();
+  const voterAddress = await signer.getAddress();
+
+  return {
+    receipt,
+    txHash: tx.hash,
+    voterAddress,
+  };
 };
