@@ -99,18 +99,16 @@ function ProposalsList() {
   const handleVote = async (proposalId: number, voteYes: boolean) => {
     setVotingId(proposalId);
     try {
-      const receipt = await castVote(proposalId, voteYes);
-
-      await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/proposals/${proposalId}/votes`,
+      const result = await castVote(id,voteYes);
+        await fetch(`https://evm-voting-dapp-production.up.railway.app/api/proposals/${id}/votes`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            txHash: receipt.hash,
-            voterAddress: receipt.from,
+            txHash: result.txHash,
+            voterAddress: result.voterAddress,
             support: voteYes,
-            blockNumber: receipt.blockNumber,
+            blockNumber: result.receipt.blockNumber,
           }),
         }
       );
@@ -241,7 +239,7 @@ function ProposalsList() {
                 isVoting={votingId === proposal.id}
               />
 
-              
+
             </ScrollReveal>
           ))}
         </div>
@@ -313,21 +311,21 @@ export default function ProposalsPage() {
             </div>
 
             <div className="animate-cinema-3 flex shrink-0 items-center gap-3">
-            <Link
-            href="/proposals/archive"
-            className="mono relative inline-flex items-center border border-[#4A9EFF]/25 bg-transparent px-5 py-3 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF]/70 uppercase transition-all duration-300 hover:bg-[#4A9EFF]/8 hover:border-[#4A9EFF]/45"
-            >
-            Archive
-            </Link>
-            <Link
-            href="/proposals/create"
-            className="blue-glow-btn relative inline-flex items-center border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-6 py-3 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/20 hover:border-[#4A9EFF]/60 hover:scale-[1.02] active:scale-[0.97]"
-            >
-            <span className="pointer-events-none absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-[#4A9EFF]/35" />
-            <span className="pointer-events-none absolute bottom-0 right-0 h-1.5 w-1.5 border-b border-r border-[#4A9EFF]/35" />
-          + Create
-          </Link>
-          </div>  
+              <Link
+                href="/proposals/archive"
+                className="mono relative inline-flex items-center border border-[#4A9EFF]/25 bg-transparent px-5 py-3 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF]/70 uppercase transition-all duration-300 hover:bg-[#4A9EFF]/8 hover:border-[#4A9EFF]/45"
+              >
+                Archive
+              </Link>
+              <Link
+                href="/proposals/create"
+                className="blue-glow-btn relative inline-flex items-center border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-6 py-3 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/20 hover:border-[#4A9EFF]/60 hover:scale-[1.02] active:scale-[0.97]"
+              >
+                <span className="pointer-events-none absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-[#4A9EFF]/35" />
+                <span className="pointer-events-none absolute bottom-0 right-0 h-1.5 w-1.5 border-b border-r border-[#4A9EFF]/35" />
+                + Create
+              </Link>
+            </div>
           </div>
         </div>
       </div>
