@@ -99,8 +99,8 @@ function ProposalsList() {
   const handleVote = async (proposalId: number, voteYes: boolean) => {
     setVotingId(proposalId);
     try {
-      const result = await castVote(id,voteYes);
-        await fetch(`https://evm-voting-dapp-production.up.railway.app/api/proposals/${id}/votes`,
+      const result = await castVote(proposalId,voteYes);
+        await fetch(`https://evm-voting-dapp-production.up.railway.app/api/proposals/${proposalId}/votes`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
