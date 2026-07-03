@@ -12,7 +12,8 @@
       "Bash(echo \"BUILD_EXIT:$?\")",
       "Bash(node -e ' *)",
       "Bash(npx hardhat *)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(npx eslint *)"
     ]
   }
 }

@@ -17,9 +17,7 @@ function ProfileContent() {
 
   useEffect(() => {
     if (!address) return;
-    getBalance(address)
-      .then(setBalance)
-      .catch(() => setBalance(null));
+    getBalance(address).then(setBalance).catch(() => setBalance(null));
   }, [address]);
 
   if (loading) {
@@ -28,8 +26,12 @@ function ProfileContent() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-32 animate-pulse border border-[rgba(200,216,240,0.05)] bg-[rgba(15,22,40,0.4)]"
-            style={{ animationDelay: `${i * 100}ms` }}
+            className="h-32 animate-pulse"
+            style={{
+              animationDelay: `${i * 100}ms`,
+              border: "1px solid color-mix(in srgb, var(--accent-secondary) 5%, transparent)",
+              background: "color-mix(in srgb, var(--bg-secondary) 40%, transparent)",
+            }}
           />
         ))}
       </div>
@@ -40,12 +42,18 @@ function ProfileContent() {
     return (
       <div className="py-32 text-center">
         <p
-          className="mb-3 text-xl font-bold text-[#F5F0E8]/60"
-          style={{ fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)" }}
+          className="mb-3 text-xl font-bold"
+          style={{
+            fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
+            color: "color-mix(in srgb, var(--text-primary) 60%, transparent)",
+          }}
         >
           No profile found
         </p>
-        <p className="mono mb-12 text-[10px] tracking-[0.25em] text-[#A8A090]/35 uppercase">
+        <p
+          className="mono mb-12 text-[10px] tracking-[0.25em] uppercase"
+          style={{ color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)" }}
+        >
           Connect a registered wallet
         </p>
       </div>
@@ -53,24 +61,18 @@ function ProfileContent() {
   }
 
   const memberSince = new Date(user.created_at).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+    year: "numeric", month: "long", day: "numeric",
   });
 
   const dob = new Date(user.date_of_birth).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+    year: "numeric", month: "long", day: "numeric",
   });
 
   const shortAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
     : "";
 
-  const copyAddress = () => {
-    if (address) navigator.clipboard.writeText(address);
-  };
+  const copyAddress = () => { if (address) navigator.clipboard.writeText(address); };
 
   return (
     <div className="space-y-6">
@@ -79,8 +81,7 @@ function ProfileContent() {
         className="relative overflow-hidden border p-8"
         style={{
           borderColor: "color-mix(in srgb, var(--accent-secondary) 8%, transparent)",
-          background:
-            "linear-gradient(160deg, color-mix(in srgb, var(--bg-secondary) 88%, transparent) 0%, color-mix(in srgb, var(--bg-dark) 92%, transparent) 100%)",
+          background: "linear-gradient(160deg, color-mix(in srgb, var(--bg-secondary) 88%, transparent) 0%, color-mix(in srgb, var(--bg-dark) 92%, transparent) 100%)",
         }}
       >
         <span
@@ -118,73 +119,51 @@ function ProfileContent() {
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="mono text-[9px] tracking-[0.28em] uppercase text-[#A8A090]/40">
-              Wallet
-            </p>
-            <button
-              onClick={copyAddress}
-              className="mono mt-1 text-[12px] transition-colors hover:text-[#4A9EFF]"
-              style={{ color: "color-mix(in srgb, var(--text-primary) 75%, transparent)" }}
-              title="Click to copy full address"
-            >
-              {shortAddress}
-            </button>
-          </div>
-          <div>
-            <p className="mono text-[9px] tracking-[0.28em] uppercase text-[#A8A090]/40">
-              Email
-            </p>
-            <p
-              className="mono mt-1 text-[12px]"
-              style={{ color: "color-mix(in srgb, var(--text-primary) 75%, transparent)" }}
-            >
-              {user.email}
-            </p>
-          </div>
-          <div>
-            <p className="mono text-[9px] tracking-[0.28em] uppercase text-[#A8A090]/40">
-              Date of Birth
-            </p>
-            <p
-              className="mono mt-1 text-[12px]"
-              style={{ color: "color-mix(in srgb, var(--text-primary) 75%, transparent)" }}
-            >
-              {dob}
-            </p>
-          </div>
-          <div>
-            <p className="mono text-[9px] tracking-[0.28em] uppercase text-[#A8A090]/40">
-              Member Since
-            </p>
-            <p
-              className="mono mt-1 text-[12px]"
-              style={{ color: "color-mix(in srgb, var(--text-primary) 75%, transparent)" }}
-            >
-              {memberSince}
-            </p>
-          </div>
+          {[
+            { label: "Wallet", content: (
+              <button
+                onClick={copyAddress}
+                className="mono mt-1 text-[12px] transition-colors hover:text-[#4A9EFF]"
+                style={{ color: "color-mix(in srgb, var(--text-primary) 75%, transparent)" }}
+                title="Click to copy full address"
+              >
+                {shortAddress}
+              </button>
+            )},
+            { label: "Email", content: (
+              <p className="mono mt-1 text-[12px]" style={{ color: "color-mix(in srgb, var(--text-primary) 75%, transparent)" }}>
+                {user.email}
+              </p>
+            )},
+            { label: "Date of Birth", content: (
+              <p className="mono mt-1 text-[12px]" style={{ color: "color-mix(in srgb, var(--text-primary) 75%, transparent)" }}>
+                {dob}
+              </p>
+            )},
+            { label: "Member Since", content: (
+              <p className="mono mt-1 text-[12px]" style={{ color: "color-mix(in srgb, var(--text-primary) 75%, transparent)" }}>
+                {memberSince}
+              </p>
+            )},
+          ].map(({ label, content }) => (
+            <div key={label}>
+              <p
+                className="mono text-[9px] tracking-[0.28em] uppercase"
+                style={{ color: "color-mix(in srgb, var(--text-secondary) 40%, transparent)" }}
+              >
+                {label}
+              </p>
+              {content}
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <StatCard
-          label="Balance"
-          value={balance ? `${parseFloat(balance).toFixed(4)} ETH` : "—"}
-          subtitle="Sepolia"
-        />
-        <StatCard
-          label="Account Type"
-          value="Voter"
-          subtitle="Active"
-        />
-        <StatCard
-          label="Status"
-          value="Verified"
-          subtitle="Registered"
-          accent
-        />
+        <StatCard label="Balance" value={balance ? `${parseFloat(balance).toFixed(4)} ETH` : "—"} subtitle="Sepolia" />
+        <StatCard label="Account Type" value="Voter" subtitle="Active" />
+        <StatCard label="Status" value="Verified" subtitle="Registered" accent />
       </div>
 
       {/* Quick actions */}
@@ -204,21 +183,32 @@ function ProfileContent() {
         <div className="flex flex-wrap gap-3">
           <Link
             href="/proposals/create"
-            className="mono inline-flex items-center border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-5 py-2.5 text-[10px] font-medium tracking-[0.15em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/20 hover:border-[#4A9EFF]/60"
+            className="mono inline-flex items-center border px-5 py-2.5 text-[10px] font-medium tracking-[0.15em] uppercase transition-all duration-300"
+            style={{
+              borderColor: "color-mix(in srgb, var(--accent) 40%, transparent)",
+              background: "color-mix(in srgb, var(--accent) 10%, transparent)",
+              color: "var(--accent)",
+            }}
           >
             + Create Proposal
           </Link>
           <Link
             href="/proposals"
-            className="mono inline-flex items-center border border-[rgba(200,216,240,0.1)] px-5 py-2.5 text-[10px] font-medium tracking-[0.15em] uppercase transition-all duration-300 hover:border-[rgba(200,216,240,0.2)]"
-            style={{ color: "color-mix(in srgb, var(--text-secondary) 70%, transparent)" }}
+            className="mono inline-flex items-center border px-5 py-2.5 text-[10px] font-medium tracking-[0.15em] uppercase transition-all duration-300"
+            style={{
+              borderColor: "color-mix(in srgb, var(--accent-secondary) 10%, transparent)",
+              color: "color-mix(in srgb, var(--text-secondary) 70%, transparent)",
+            }}
           >
             View Proposals
           </Link>
           <Link
             href="/proposals/archive"
-            className="mono inline-flex items-center border border-[rgba(200,216,240,0.1)] px-5 py-2.5 text-[10px] font-medium tracking-[0.15em] uppercase transition-all duration-300 hover:border-[rgba(200,216,240,0.2)]"
-            style={{ color: "color-mix(in srgb, var(--text-secondary) 70%, transparent)" }}
+            className="mono inline-flex items-center border px-5 py-2.5 text-[10px] font-medium tracking-[0.15em] uppercase transition-all duration-300"
+            style={{
+              borderColor: "color-mix(in srgb, var(--accent-secondary) 10%, transparent)",
+              color: "color-mix(in srgb, var(--text-secondary) 70%, transparent)",
+            }}
           >
             Archive
           </Link>
@@ -239,15 +229,9 @@ function ProfileContent() {
 }
 
 function StatCard({
-  label,
-  value,
-  subtitle,
-  accent = false,
+  label, value, subtitle, accent = false,
 }: {
-  label: string;
-  value: string;
-  subtitle: string;
-  accent?: boolean;
+  label: string; value: string; subtitle: string; accent?: boolean;
 }) {
   return (
     <div
@@ -261,7 +245,10 @@ function StatCard({
           : "color-mix(in srgb, var(--bg-secondary) 50%, transparent)",
       }}
     >
-      <p className="mono text-[9px] tracking-[0.28em] uppercase text-[#A8A090]/45">
+      <p
+        className="mono text-[9px] tracking-[0.28em] uppercase"
+        style={{ color: "color-mix(in srgb, var(--text-secondary) 45%, transparent)" }}
+      >
         {label}
       </p>
       <p
@@ -275,7 +262,10 @@ function StatCard({
       >
         {value}
       </p>
-      <p className="mono mt-1 text-[9px] tracking-[0.2em] uppercase text-[#A8A090]/30">
+      <p
+        className="mono mt-1 text-[9px] tracking-[0.2em] uppercase"
+        style={{ color: "color-mix(in srgb, var(--text-secondary) 30%, transparent)" }}
+      >
         {subtitle}
       </p>
     </div>
@@ -284,40 +274,68 @@ function StatCard({
 
 export default function ProfilePage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#0A0F1E] text-[#F5F0E8]">
+    <div
+      className="flex min-h-screen flex-col"
+      style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
+    >
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="animate-atmospheric absolute -top-60 left-1/2 h-[700px] w-[800px] -translate-x-1/2 rounded-full bg-[#4A9EFF]/[0.05] blur-[180px]" />
+        <div
+          className="animate-atmospheric absolute -top-60 left-1/2 h-[700px] w-[800px] -translate-x-1/2 rounded-full blur-[180px]"
+          style={{ background: "color-mix(in srgb, var(--accent) 5%, transparent)" }}
+        />
       </div>
 
       <Navbar />
 
-      <div className="relative overflow-hidden border-b border-[rgba(200,216,240,0.06)]">
+      <div
+        className="relative overflow-hidden border-b"
+        style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 6%, transparent)" }}
+      >
         <div className="fine-grid pointer-events-none absolute inset-0 opacity-50" />
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-25" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0A0F1E]" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/22 to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "linear-gradient(to bottom, transparent, transparent, var(--bg-primary))" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 22%, transparent), transparent)" }}
+        />
 
         <div className="relative mx-auto max-w-6xl px-8 pb-14 pt-16">
           <div className="animate-fade-up mb-8 flex items-center gap-4">
-            <span className="mono text-[9px] tracking-[0.4em] text-[#4A9EFF]/40 uppercase">
+            <span
+              className="mono text-[9px] tracking-[0.4em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--accent) 40%, transparent)" }}
+            >
               // Personal Dashboard
             </span>
-            <span className="animate-line-extend h-px flex-1 bg-[rgba(200,216,240,0.05)]" />
-            <span className="mono text-[9px] tracking-[0.2em] text-[#A8A090]/20 uppercase">
+            <span
+              className="animate-line-extend h-px flex-1"
+              style={{ background: "color-mix(in srgb, var(--accent-secondary) 5%, transparent)" }}
+            />
+            <span
+              className="mono text-[9px] tracking-[0.2em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 20%, transparent)" }}
+            >
               Account
             </span>
           </div>
 
           <h1
-            className="animate-cinema-1 font-extrabold leading-[0.85] tracking-[-0.025em] text-[#F5F0E8]/85"
+            className="animate-cinema-1 font-extrabold leading-[0.85] tracking-[-0.025em]"
             style={{
               fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
               fontSize: "clamp(3rem, 8vw, 6rem)",
+              color: "color-mix(in srgb, var(--text-primary) 85%, transparent)",
             }}
           >
             PROFILE
           </h1>
-          <p className="animate-cinema-2 mono mt-4 text-[11px] tracking-[0.22em] text-[#A8A090]/40 uppercase">
+          <p
+            className="animate-cinema-2 mono mt-4 text-[11px] tracking-[0.22em] uppercase"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 40%, transparent)" }}
+          >
             Your on-chain governance identity
           </p>
         </div>

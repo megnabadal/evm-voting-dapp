@@ -28,24 +28,17 @@ function ActivityList() {
 
   useEffect(() => {
     if (proposals.length === 0) return;
-
     let cancelled = false;
     setLoading(true);
-
     Promise.all(
       proposals.map(async (p) => {
         const votes = await getProposalVotes(p.id);
-        return votes.map((v) => ({
-          ...v,
-          proposalId: p.id,
-          proposalTitle: p.title,
-        }));
+        return votes.map((v) => ({ ...v, proposalId: p.id, proposalTitle: p.title }));
       })
     )
       .then((results) => {
         if (cancelled) return;
         const all = results.flat();
-        // Sort by blockNumber descending (newest blocks first)
         all.sort((a, b) => b.blockNumber - a.blockNumber);
         setActivity(all);
         setLoading(false);
@@ -54,10 +47,7 @@ function ActivityList() {
         console.error("Failed to load activity:", err);
         if (!cancelled) setLoading(false);
       });
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [proposals]);
 
   const totalPages = Math.ceil(activity.length / ITEMS_PER_PAGE);
@@ -73,8 +63,12 @@ function ActivityList() {
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            className="h-16 animate-pulse border border-[rgba(200,216,240,0.05)] bg-[rgba(15,22,40,0.4)]"
-            style={{ animationDelay: `${i * 80}ms` }}
+            className="h-16 animate-pulse"
+            style={{
+              animationDelay: `${i * 80}ms`,
+              border: "1px solid color-mix(in srgb, var(--accent-secondary) 5%, transparent)",
+              background: "color-mix(in srgb, var(--bg-secondary) 40%, transparent)",
+            }}
           />
         ))}
       </div>
@@ -84,21 +78,43 @@ function ActivityList() {
   if (activity.length === 0) {
     return (
       <div className="py-32 text-center">
-        <div className="relative mx-auto mb-8 flex h-16 w-16 items-center justify-center border border-[rgba(200,216,240,0.08)] bg-[rgba(15,22,40,0.6)]">
-          <span className="mono text-2xl text-[#A8A090]/35">∅</span>
+        <div
+          className="relative mx-auto mb-8 flex h-16 w-16 items-center justify-center"
+          style={{
+            border: "1px solid color-mix(in srgb, var(--accent-secondary) 8%, transparent)",
+            background: "color-mix(in srgb, var(--bg-secondary) 60%, transparent)",
+          }}
+        >
+          <span
+            className="mono text-2xl"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)" }}
+          >
+            ∅
+          </span>
         </div>
         <p
-          className="mb-3 text-xl font-bold text-[#F5F0E8]/60"
-          style={{ fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)" }}
+          className="mb-3 text-xl font-bold"
+          style={{
+            fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
+            color: "color-mix(in srgb, var(--text-primary) 60%, transparent)",
+          }}
         >
           No activity yet
         </p>
-        <p className="mono mb-12 text-[10px] tracking-[0.25em] text-[#A8A090]/35 uppercase">
+        <p
+          className="mono mb-12 text-[10px] tracking-[0.25em] uppercase"
+          style={{ color: "color-mix(in srgb, var(--text-secondary) 35%, transparent)" }}
+        >
           Cast a vote to populate the feed
         </p>
         <Link
           href="/proposals"
-          className="mono inline-flex items-center border border-[#4A9EFF]/40 bg-[#4A9EFF]/10 px-7 py-3.5 text-[11px] font-medium tracking-[0.15em] text-[#4A9EFF] uppercase transition-all duration-300 hover:bg-[#4A9EFF]/20"
+          className="mono inline-flex items-center border px-7 py-3.5 text-[11px] font-medium tracking-[0.15em] uppercase transition-all duration-300"
+          style={{
+            borderColor: "color-mix(in srgb, var(--accent) 40%, transparent)",
+            background: "color-mix(in srgb, var(--accent) 10%, transparent)",
+            color: "var(--accent)",
+          }}
         >
           View Proposals
         </Link>
@@ -116,13 +132,12 @@ function ActivityList() {
           return (
             <div
               key={`${item.txHash}-${i}`}
-              className="relative flex items-center justify-between gap-4 border p-4 transition-all duration-300 hover:border-[#4A9EFF]/20"
+              className="relative flex items-center justify-between gap-4 p-4 transition-all duration-300"
               style={{
-                borderColor: "color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
                 background: "color-mix(in srgb, var(--bg-secondary) 50%, transparent)",
               }}
             >
-              {/* Vote indicator */}
               <div className="flex items-center gap-3">
                 <div
                   className="mono flex h-9 w-9 items-center justify-center border text-[10px] font-bold"
@@ -156,9 +171,7 @@ function ActivityList() {
                     <span style={{ color: "color-mix(in srgb, var(--accent) 60%, transparent)" }}>
                       OP-{String(item.proposalId).padStart(3, "0")}
                     </span>
-                    <span style={{ color: "color-mix(in srgb, var(--text-secondary) 30%, transparent)" }}>
-                      ·
-                    </span>
+                    <span style={{ color: "color-mix(in srgb, var(--text-secondary) 30%, transparent)" }}>·</span>
                     <span style={{ color: "color-mix(in srgb, var(--text-secondary) 50%, transparent)" }}>
                       by {shortVoter}
                     </span>
@@ -202,40 +215,68 @@ function ActivityList() {
 
 export default function ActivityPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#0A0F1E] text-[#F5F0E8]">
+    <div
+      className="flex min-h-screen flex-col"
+      style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
+    >
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="animate-atmospheric absolute -top-60 left-1/2 h-[700px] w-[800px] -translate-x-1/2 rounded-full bg-[#4A9EFF]/[0.05] blur-[180px]" />
+        <div
+          className="animate-atmospheric absolute -top-60 left-1/2 h-[700px] w-[800px] -translate-x-1/2 rounded-full blur-[180px]"
+          style={{ background: "color-mix(in srgb, var(--accent) 5%, transparent)" }}
+        />
       </div>
 
       <Navbar />
 
-      <div className="relative overflow-hidden border-b border-[rgba(200,216,240,0.06)]">
+      <div
+        className="relative overflow-hidden border-b"
+        style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 6%, transparent)" }}
+      >
         <div className="fine-grid pointer-events-none absolute inset-0 opacity-50" />
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-25" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0A0F1E]" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4A9EFF]/22 to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "linear-gradient(to bottom, transparent, transparent, var(--bg-primary))" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 22%, transparent), transparent)" }}
+        />
 
         <div className="relative mx-auto max-w-6xl px-8 pb-14 pt-16">
           <div className="animate-fade-up mb-8 flex items-center gap-4">
-            <span className="mono text-[9px] tracking-[0.4em] text-[#4A9EFF]/40 uppercase">
+            <span
+              className="mono text-[9px] tracking-[0.4em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--accent) 40%, transparent)" }}
+            >
               // Network Activity
             </span>
-            <span className="animate-line-extend h-px flex-1 bg-[rgba(200,216,240,0.05)]" />
-            <span className="mono text-[9px] tracking-[0.2em] text-[#A8A090]/20 uppercase">
+            <span
+              className="animate-line-extend h-px flex-1"
+              style={{ background: "color-mix(in srgb, var(--accent-secondary) 5%, transparent)" }}
+            />
+            <span
+              className="mono text-[9px] tracking-[0.2em] uppercase"
+              style={{ color: "color-mix(in srgb, var(--text-secondary) 20%, transparent)" }}
+            >
               Live Feed
             </span>
           </div>
 
           <h1
-            className="animate-cinema-1 font-extrabold leading-[0.85] tracking-[-0.025em] text-[#F5F0E8]/85"
+            className="animate-cinema-1 font-extrabold leading-[0.85] tracking-[-0.025em]"
             style={{
               fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
               fontSize: "clamp(3rem, 8vw, 6rem)",
+              color: "color-mix(in srgb, var(--text-primary) 85%, transparent)",
             }}
           >
             ACTIVITY
           </h1>
-          <p className="animate-cinema-2 mono mt-4 text-[11px] tracking-[0.22em] text-[#A8A090]/40 uppercase">
+          <p
+            className="animate-cinema-2 mono mt-4 text-[11px] tracking-[0.22em] uppercase"
+            style={{ color: "color-mix(in srgb, var(--text-secondary) 40%, transparent)" }}
+          >
             All on-chain votes — most recent first
           </p>
         </div>
