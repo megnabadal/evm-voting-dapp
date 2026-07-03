@@ -71,7 +71,7 @@ export const castVote = async (
 ): Promise<{
   receipt: ethers.TransactionReceipt;
   txHash: string;
-  voterAddress: string;
+voterAddress: string;
 }> => {
   const contract = await getContractWithSigner();
 

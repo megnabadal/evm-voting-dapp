@@ -31,6 +31,7 @@ interface VoteData {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const SEPOLIA_TX_URL = "https://sepolia.etherscan.io/tx/";
+const RAILWAY_URL = "https://evm-voting-dapp-production.up.railway.app";
 const PAGE_SIZE = 10;
 
 function truncate(hash: string, start = 10, end = 8): string {
@@ -65,7 +66,6 @@ function VoteTransactionList({
         background: "color-mix(in srgb, var(--bg-primary) 50%, transparent)",
       }}
     >
-      {/* Blue top edge if yes */}
       {isYes && (
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-px"
@@ -269,9 +269,7 @@ function ProposalDetail({ id }: { id: number }) {
     try {
       setVoteLoading(true);
       setVoteError(null);
-      const res = await fetch(
-        `${"https://evm-voting-dapp-production.up.railway.app"}/api/proposals/${id}/votes`
-      );
+      const res = await fetch(`${RAILWAY_URL}/api/proposals/${id}/votes`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setVoteData(data.data);
@@ -293,8 +291,11 @@ function ProposalDetail({ id }: { id: number }) {
     setToast(null);
     try {
       const result = await castVote(id, voteYes);
-        await fetch(`https://evm-voting-dapp-production.up.railway.app/api/proposals/${id}/votes`,
-        {
+
+      // Save vote transaction to DB. On-chain vote already confirmed at this point.
+      // A failure here does not undo the on-chain vote — log it but do not surface as error.
+      try {
+        const response = await fetch(`${RAILWAY_URL}/api/proposals/${id}/votes`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -303,8 +304,20 @@ function ProposalDetail({ id }: { id: number }) {
             support: voteYes,
             blockNumber: result.receipt.blockNumber,
           }),
+        });
+
+        if (!response.ok) {
+          const errorBody = await response.text();
+          console.error(
+            `[VoteChain] Failed to save vote transaction to DB. Status: ${response.status}. Proposal: ${id}. TxHash: ${result.txHash}. Body: ${errorBody}`
+          );
         }
-      );
+      } catch (dbErr: unknown) {
+        const e = dbErr as Error;
+        console.error(
+          `[VoteChain] Network error saving vote transaction to DB. Proposal: ${id}. TxHash: ${result.txHash}. Error: ${e.message}`
+        );
+      }
 
       setToast({ message: "Vote submitted!", type: "success" });
       await fetchProposal();
@@ -390,13 +403,10 @@ function ProposalDetail({ id }: { id: number }) {
           border: "1px solid color-mix(in srgb, var(--accent-secondary) 7%, transparent)",
         }}
       >
-        {/* Blue top accent */}
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-px"
           style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 45%, transparent), transparent)" }}
         />
-
-        {/* Corner frames */}
         <span
           className="pointer-events-none absolute top-0 left-0 h-8 w-8 border-t-2 border-l-2"
           style={{ borderColor: "color-mix(in srgb, var(--accent) 22%, transparent)" }}
@@ -413,15 +423,12 @@ function ProposalDetail({ id }: { id: number }) {
           className="pointer-events-none absolute bottom-0 right-0 h-8 w-8 border-b-2 border-r-2"
           style={{ borderColor: "color-mix(in srgb, var(--accent) 22%, transparent)" }}
         />
-
-        {/* Atmospheric inner glow */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{ background: "linear-gradient(to bottom right, color-mix(in srgb, var(--accent) 2%, transparent), transparent)" }}
         />
 
         <div className="relative p-8 sm:p-12">
-          {/* Classification strip */}
           <div
             className="mb-8 flex items-center gap-3 border-b pb-5"
             style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 5%, transparent)" }}
@@ -444,7 +451,6 @@ function ProposalDetail({ id }: { id: number }) {
             </span>
           </div>
 
-          {/* Status + deadline */}
           <div className="mb-8 flex flex-wrap items-center gap-4">
             <span
               className="mono inline-flex items-center gap-2.5 border px-3.5 py-1.5 text-[9px] font-medium tracking-[0.28em] uppercase"
@@ -477,7 +483,6 @@ function ProposalDetail({ id }: { id: number }) {
             </span>
           </div>
 
-          {/* Title */}
           <h1
             className="mb-6 font-bold leading-tight tracking-[-0.02em]"
             style={{
@@ -489,7 +494,6 @@ function ProposalDetail({ id }: { id: number }) {
             {proposal.title}
           </h1>
 
-          {/* Description */}
           <p
             className="mb-12 text-[14px] leading-[1.85]"
             style={{ color: "color-mix(in srgb, var(--text-secondary) 60%, transparent)" }}
@@ -497,7 +501,6 @@ function ProposalDetail({ id }: { id: number }) {
             {proposal.description}
           </p>
 
-          {/* Vote distribution panel */}
           <div
             className="relative p-7"
             style={{
@@ -521,7 +524,6 @@ function ProposalDetail({ id }: { id: number }) {
               // Vote Distribution
             </p>
 
-            {/* Labels */}
             <div className="mb-3 flex items-center justify-between">
               <span
                 className="mono text-[13px] font-semibold tabular-nums tracking-[0.10em] uppercase"
@@ -537,7 +539,6 @@ function ProposalDetail({ id }: { id: number }) {
               </span>
             </div>
 
-            {/* Vote bar */}
             <div
               className="mb-5 h-2 w-full overflow-hidden"
               style={{ background: "color-mix(in srgb, var(--accent-secondary) 4%, transparent)" }}
@@ -574,7 +575,6 @@ function ProposalDetail({ id }: { id: number }) {
             </p>
           </div>
 
-          {/* Vote buttons */}
           {proposal.status === "Active" && (
             <div className="mt-8">
               <p
@@ -723,7 +723,6 @@ export default function ProposalDetailPage() {
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      {/* Ambient atmospheric glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div
           className="animate-atmospheric absolute -top-60 left-1/2 h-[600px] w-[700px] -translate-x-1/2 rounded-full blur-[180px]"
@@ -737,7 +736,6 @@ export default function ProposalDetailPage() {
 
       <Navbar />
 
-      {/* Cinematic page header */}
       <div
         className="relative overflow-hidden border-b"
         style={{ borderColor: "color-mix(in srgb, var(--accent-secondary) 5%, transparent)" }}
@@ -751,7 +749,6 @@ export default function ProposalDetailPage() {
           className="pointer-events-none absolute inset-0"
           style={{ background: "linear-gradient(to bottom, transparent, var(--bg-primary))" }}
         />
-        {/* Atmospheric depth glow */}
         <div
           className="pointer-events-none absolute right-1/4 top-0 h-[180px] w-[300px] rounded-full blur-[80px]"
           style={{ background: "color-mix(in srgb, var(--accent) 4%, transparent)" }}
