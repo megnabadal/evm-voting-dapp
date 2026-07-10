@@ -1,6 +1,8 @@
-// Base URL for the backend API
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+// Base URL for the backend API.
+// Hardcoded per Lessons Learnt #4 — Vercel NEXT_PUBLIC_* vars proved unreliable.
+// The dashboard value was left as the placeholder "your-railway-url", which
+// silently broke all proposal saves from Jul 3 onward.
+const API_BASE_URL = "https://evm-voting-dapp-production.up.railway.app";
 
 // ─── Types matching backend response ─────────────────────────────────────────
 // Backend now returns merged chain+DB data
