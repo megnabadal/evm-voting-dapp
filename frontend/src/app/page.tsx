@@ -95,10 +95,13 @@ export default function HomePage() {
         const proposals = raw as Array<{
           yesVotes: bigint;
           noVotes: bigint;
-          active: boolean;
+          deadline: bigint;
         }>;
+        const nowSeconds = Math.floor(Date.now() / 1000);
         const totalProposals = proposals.length;
-        const activeProposals = proposals.filter((p) => Boolean(p.active)).length;
+        const activeProposals = proposals.filter(
+          (p) => Number(p.deadline) > nowSeconds
+        ).length;
         const totalVotes = proposals.reduce(
           (sum, p) => sum + Number(p.yesVotes) + Number(p.noVotes),
           0
